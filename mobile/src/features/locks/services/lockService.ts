@@ -15,6 +15,21 @@ function addEvent(lockId: string, action: 'lock' | 'unlock') {
   });
 }
 
+async function waitForConnection(
+  client: { isConnected: boolean },
+  timeoutMs: number = 5000,
+  pollIntervalMs: number = 50
+): Promise<void> {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    if (client.isConnected) {
+      return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
+  }
+  throw new Error('Timeout while waiting for lock client to connect');
+}
+
 /* ---- Public API ---- */
 
 export async function fetchLocks(): Promise<Lock[]> {
@@ -27,7 +42,12 @@ export async function fetchLocks(): Promise<Lock[]> {
         lockWsClient.setToken(lock.token);
         if (!lockWsClient.isConnected) {
           lockWsClient.connect(lock.ipAddress, lock.token);
-          await new Promise((r) => setTimeout(r, 1500));
+          try {
+            await waitForConnection(lockWsClient);
+          } catch {
+            // Connection did not establish in time; treat as unreachable
+            return lock;
+          }
         }
         if (lockWsClient.isConnected) {
           const res = await lockWsClient.send('get_status');
