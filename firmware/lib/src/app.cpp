@@ -6,6 +6,7 @@
 #include "measure.h"
 #include "gpio_mapping.h"
 #include "error_tracker.h"
+#include "motor.h"
 
 #include <cstring>
 
@@ -13,11 +14,13 @@ Params          params;
 Clock           clock;
 Measure         measure(clock);
 ErrorTracker    error_tracker(measure);
+Motor			motor;
 
 Measureable* measureables[] = {
 	&params,
 	&clock,
 	&error_tracker,
+	&motor,
 	nullptr
 };
 
@@ -53,10 +56,14 @@ void smart_reamer_main_loop_begin() {
 	measure.set_measureables(measureables);
 	measure.begin();
 	error_tracker.begin();
+
+	motor.begin();
 }
 
 void smart_reamer_main_loop_body() {
 	measure.update();
 	params.update();
 	error_tracker.update();
+
+	motor.update();
 }
