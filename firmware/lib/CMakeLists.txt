@@ -7,7 +7,6 @@ target_sources(smart_reamer_lib PRIVATE
     src/writer.cpp
     src/error_tracker.cpp
     src/params.cpp
-    src/motor.cpp
 )
 
 target_include_directories(smart_reamer_lib INTERFACE
