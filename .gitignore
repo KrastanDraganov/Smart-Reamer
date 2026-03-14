@@ -98,3 +98,8 @@ coverage/
 
 # Documentation (generated)
 /docs
+.DS_Store
+*.swp
+*.swo
+*~
+firmware/main_esp32/main/certs/prvtkey.pem
