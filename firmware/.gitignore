@@ -1,0 +1,5 @@
+.DS_Store
+*.swp
+*.swo
+*~
+main_esp32/main/certs/prvtkey.pem
