@@ -15,5 +15,6 @@ export const STORAGE_KEYS = {
   },
   locks: {
     savedLocks: 'locks_saved_list',
+    pairingTokens: 'locks_pairing_tokens',
   },
 } as const;

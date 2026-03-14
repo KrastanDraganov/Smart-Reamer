@@ -27,6 +27,10 @@ export default function AddLockLayout() {
         name="name"
         options={{ title: t('discovery.name.title') }}
       />
+      <Stack.Screen
+        name="wifi"
+        options={{ title: t('discovery.wifi.title') }}
+      />
     </Stack>
   );
 }

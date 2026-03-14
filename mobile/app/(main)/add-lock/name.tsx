@@ -33,7 +33,7 @@ export default function NameScreen() {
       device: selectedDevice,
     });
     resetFlow();
-    router.dismissAll();
+    router.push('/add-lock/wifi');
   };
 
   return (
