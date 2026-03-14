@@ -6,6 +6,7 @@
 #include <esp_timer.h>
 #include <nvs_flash.h>
 #include <sys/param.h>
+#include <string.h>
 #include "app.h"
 #include "config.h"
 #include "esp_netif.h"
@@ -344,7 +345,39 @@ static esp_err_t ws_handler(httpd_req_t* req) {
 						nvs_set_u8(wh, NVS_KEY_PROVISIONED, 1);
 						nvs_commit(wh);
 						nvs_close(wh);
+					} else {
+						ESP_LOGE(TAG, "Failed to open NVS namespace for WiFi config");
 					}
+
+					/* Apply new WiFi configuration immediately so provisioning takes effect at runtime */
+					wifi_config_t sta_cfg;
+					memset(&sta_cfg, 0, sizeof(sta_cfg));
+					strncpy((char *)sta_cfg.sta.ssid, ssid, sizeof(sta_cfg.sta.ssid) - 1);
+					strncpy((char *)sta_cfg.sta.password, password, sizeof(sta_cfg.sta.password) - 1);
+
+					esp_err_t wifi_err;
+
+					wifi_err = esp_wifi_set_mode(WIFI_MODE_STA);
+					if (wifi_err != ESP_OK) {
+						ESP_LOGE(TAG, "esp_wifi_set_mode failed: %s", esp_err_to_name(wifi_err));
+					}
+
+					wifi_err = esp_wifi_set_config(WIFI_IF_STA, &sta_cfg);
+					if (wifi_err != ESP_OK) {
+						ESP_LOGE(TAG, "esp_wifi_set_config failed: %s", esp_err_to_name(wifi_err));
+					}
+
+					/* Reconnect with new credentials */
+					wifi_err = esp_wifi_disconnect();
+					if (wifi_err != ESP_OK) {
+						ESP_LOGE(TAG, "esp_wifi_disconnect failed: %s", esp_err_to_name(wifi_err));
+					}
+
+					wifi_err = esp_wifi_connect();
+					if (wifi_err != ESP_OK) {
+						ESP_LOGE(TAG, "esp_wifi_connect failed: %s", esp_err_to_name(wifi_err));
+					}
+
 					snprintf(response, sizeof(response),
 						"{\"id\":%d,\"status\":\"ok\",\"message\":\"wifi configured, restart to apply\"}", id);
 					respond_str(req, response);
