@@ -1,13 +1,14 @@
 #pragma once
 
 #include <cstdint>
-#include <functional>
 
 class Button {
 	public:
+		using Callback = void(*)(bool);
+
 		static constexpr uint32_t DEBOUNCE_DELAY_MS = 50;
 
-		Button(uint8_t pin, std::function<void(bool)> callback);
+		Button(uint8_t pin, Callback callback);
 
 		void begin();
 		void update();
@@ -19,5 +20,5 @@ class Button {
 		bool    pressed      = false;
 		bool    last_state   = false;
 		uint32_t last_change = 0;
-		std::function<void(bool)> callback;
+		Callback callback;
 };
