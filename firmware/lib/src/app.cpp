@@ -7,8 +7,28 @@
 #include "gpio_mapping.h"
 #include "error_tracker.h"
 #include "motor.h"
+#include "button.h"
 
 #include <cstring>
+
+bool reamer_locked     = false;
+bool pair_mode         = false;
+bool unlock_request    = false;
+
+void on_lock_button(bool pressed) {
+	if (pressed) {
+		unlock_request = true;
+	}
+	smart_reamer_ex_log_info("BUTTON", "Lock button: %s", pressed ? "pressed" : "released");
+}
+
+void on_pair_button(bool pressed) {
+	pair_mode = pressed;
+	smart_reamer_ex_log_info("BUTTON", "Pair button: %s", pressed ? "ON" : "OFF");
+}
+
+Button button_lock(BUTTON_UNLOCK, on_lock_button);
+Button button_pair(BUTTON_PAIR, on_pair_button);
 
 Params          params;
 Clock           clock;
@@ -52,12 +72,31 @@ void smart_reamer_edit_config(const char* name, const char* value_str) {
 	params.edit(name, value_str);
 }
 
+bool smart_reamer_is_locked(void) {
+	return reamer_locked;
+}
+
+bool smart_reamer_is_pair_mode(void) {
+	return pair_mode;
+}
+
+bool smart_reamer_get_unlock_request(void) {
+	if (unlock_request) {
+		unlock_request = false;
+		return true;
+	}
+	return false;
+}
+
 void smart_reamer_main_loop_begin() {
 	measure.set_measureables(measureables);
 	measure.begin();
 	error_tracker.begin();
 
 	motor.begin();
+
+	button_lock.begin();
+	button_pair.begin();
 }
 
 void smart_reamer_main_loop_body() {
@@ -66,4 +105,7 @@ void smart_reamer_main_loop_body() {
 	error_tracker.update();
 
 	motor.update();
+
+	button_lock.update();
+	button_pair.update();
 }

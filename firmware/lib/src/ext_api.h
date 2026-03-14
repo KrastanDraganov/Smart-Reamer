@@ -22,6 +22,9 @@ long smart_reamer_ex_motor_current_position(void);
 void smart_reamer_ex_motor_go_to_steps(long position);
 void smart_reamer_ex_motor_set_current_position(long position);
 
+void smart_reamer_ex_gpio_init_input(uint8_t pin);
+bool smart_reamer_ex_gpio_read(uint8_t pin);
+
 #ifdef __cplusplus
 }
 #endif

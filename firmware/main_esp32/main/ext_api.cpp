@@ -178,4 +178,14 @@ void smart_reamer_ex_motor_set_current_position(long position) {
 	motor_stepper.setCurrentPosition(position);
 }
 
+void smart_reamer_ex_gpio_init_input(uint8_t pin) {
+	gpio_reset_pin((gpio_num_t)pin);
+	gpio_set_direction((gpio_num_t)pin, GPIO_MODE_INPUT);
+	gpio_set_pull_mode((gpio_num_t)pin, GPIO_FLOATING);
+}
+
+bool smart_reamer_ex_gpio_read(uint8_t pin) {
+	return gpio_get_level((gpio_num_t)pin) == 1;
+}
+
 }

@@ -19,6 +19,10 @@ void  smart_reamer_measure_finished_using_json(void);
 
 void smart_reamer_edit_config(const char* name, const char* value_str);
 
+bool smart_reamer_is_locked(void);
+bool smart_reamer_is_pair_mode(void);
+bool smart_reamer_get_unlock_request(void);
+
 #ifdef __cplusplus
 }
 #endif

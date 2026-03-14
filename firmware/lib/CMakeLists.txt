@@ -8,6 +8,7 @@ target_sources(smart_reamer_lib PRIVATE
     src/error_tracker.cpp
     src/params.cpp
     src/motor.cpp
+    src/button.cpp
 )
 
 target_include_directories(smart_reamer_lib INTERFACE
