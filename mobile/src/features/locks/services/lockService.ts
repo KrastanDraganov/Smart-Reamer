@@ -161,9 +161,12 @@ export async function addLock(payload: AddLockPayload): Promise<Lock> {
 }
 
 export async function deleteLock(id: string): Promise<void> {
-  const { removeLock } = useLockStore.getState();
-  lockWsClient.disconnect();
+  const { locks, removeLock } = useLockStore.getState();
+  const isLastLock = locks.length === 1;
   removeLock(id);
+  if (isLastLock) {
+    lockWsClient.disconnect();
+  }
 }
 
 export async function renameLock(id: string, name: string): Promise<Lock> {
