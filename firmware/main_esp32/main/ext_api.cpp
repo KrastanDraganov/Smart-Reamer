@@ -158,6 +158,8 @@ static stepper_motor motor_stepper(
 extern "C" {
 
 void smart_reamer_ex_motor_init() {
+	motor_stepper.setEnablePin(MOTOR_ENABLE_PIN);
+	motor_stepper.setPinsInverted(false, false, MOTOR_ENABLE_INVERTED);
 	motor_stepper.setMaxSpeed(MOTOR_MAX_SPEED);
 	motor_stepper.setAcceleration(MOTOR_ACCELERATION);
 	motor_stepper.setSpeed(MOTOR_SPEED);
