@@ -26,6 +26,9 @@ void smart_reamer_ex_gpio_init_input(uint8_t pin);
 void smart_reamer_ex_gpio_init_input_pullup(uint8_t pin);
 bool smart_reamer_ex_gpio_read(uint8_t pin);
 
+void smart_reamer_ex_gpio_init_output(uint8_t pin);
+void smart_reamer_ex_gpio_write(uint8_t pin, bool high);
+
 #ifdef __cplusplus
 }
 #endif

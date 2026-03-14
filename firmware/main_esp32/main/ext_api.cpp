@@ -194,4 +194,13 @@ bool smart_reamer_ex_gpio_read(uint8_t pin) {
 	return gpio_get_level((gpio_num_t)pin) == 1;
 }
 
+void smart_reamer_ex_gpio_init_output(uint8_t pin) {
+	gpio_reset_pin((gpio_num_t)pin);
+	gpio_set_direction((gpio_num_t)pin, GPIO_MODE_OUTPUT);
+}
+
+void smart_reamer_ex_gpio_write(uint8_t pin, bool high) {
+	gpio_set_level((gpio_num_t)pin, high ? 1 : 0);
+}
+
 }
