@@ -22,13 +22,16 @@ export default function WifiProvisionScreen() {
 
     setIsConfiguring(true);
     try {
-      if (lockWsClient.isConnected) {
-        await lockWsClient.send('configure_wifi', {
-          ssid: ssid.trim(),
-          password,
-        });
-        Alert.alert(t('common.done'), t('discovery.wifi.success'));
+      if (!lockWsClient.isConnected) {
+        Alert.alert(t('errors.title'), t('discovery.wifi.failed'));
+        return;
       }
+
+      await lockWsClient.send('configure_wifi', {
+        ssid: ssid.trim(),
+        password,
+      });
+      Alert.alert(t('common.done'), t('discovery.wifi.success'));
       router.dismissAll();
     } catch {
       Alert.alert(t('errors.title'), t('discovery.wifi.failed'));
