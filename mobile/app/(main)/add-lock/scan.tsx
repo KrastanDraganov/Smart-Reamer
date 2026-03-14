@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Linking, Platform, View } from 'react-native';
+import * as ExpoLinking from 'expo-linking';
 import { StyleSheet } from 'react-native-unistyles';
 import { Button } from '@/common/components/Button';
 import { ScreenContainer } from '@/common/components/ScreenContainer';
@@ -10,7 +11,6 @@ import { Text } from '@/common/components/Text';
 import { ScanningAnimation } from '@/features/locks/components/ScanningAnimation';
 import { startDiscovery } from '@/features/locks/services/discoveryService';
 import { useAddLockFlowStore } from '@/features/locks/stores/addLockFlowStore';
-
 const AP_SSID_PREFIX = 'Smart-Reamer';
 const AP_DEFAULT_IP = '192.168.4.1';
 
@@ -68,7 +68,7 @@ export default function ScanScreen() {
     if (Platform.OS === 'ios') {
       Linking.openURL('App-Prefs:WIFI');
     } else {
-      Linking.sendIntent('android.settings.WIFI_SETTINGS');
+      ExpoLinking.sendIntent('android.settings.WIFI_SETTINGS');
     }
   };
 
