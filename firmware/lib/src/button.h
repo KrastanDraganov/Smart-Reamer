@@ -1,5 +1,6 @@
 #pragma once
 
+#include "clock.h"
 #include <cstdint>
 
 class Button {
@@ -8,7 +9,7 @@ class Button {
 
 		static constexpr uint32_t DEBOUNCE_DELAY_MS = 50;
 
-		Button(uint8_t pin, Callback callback);
+		Button(uint8_t pin, Callback callback, Clock&);
 
 		void begin();
 		void update();
@@ -17,8 +18,9 @@ class Button {
 
 	private:
 		uint8_t pin;
+		Callback callback;
+		Clock* clock;
 		bool    pressed      = false;
 		bool    last_state   = false;
 		uint32_t last_change = 0;
-		Callback callback;
 };

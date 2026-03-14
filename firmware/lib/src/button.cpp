@@ -2,16 +2,14 @@
 #include "ext_api.h"
 #include "clock.h"
 
-extern Clock clock;
-
-Button::Button(uint8_t _pin, std::function<void(bool)> _callback)
-	: pin(_pin), callback(_callback) {}
+Button::Button(uint8_t _pin, Callback _callback, Clock& clk)
+	: pin(_pin), callback(_callback), clock(&clk) {}
 
 void Button::begin() {
 	smart_reamer_ex_gpio_init_input(this->pin);
 
 	bool current_state = smart_reamer_ex_gpio_read(this->pin);
-	uint32_t now       = clock.now_u32();
+	uint32_t now       = this->clock->now_u32();
 
 	this->last_state  = current_state;
 	this->pressed     = current_state;
@@ -20,7 +18,7 @@ void Button::begin() {
 
 void Button::update() {
 	bool current_state = smart_reamer_ex_gpio_read(this->pin);
-	uint32_t now       = clock.now_u32() / 1000; // convert microseconds to milliseconds
+	uint32_t now       = this->clock->now_u32() / 1000; // convert microseconds to milliseconds
 
 	if (current_state != this->last_state) {
 		this->last_change = now;

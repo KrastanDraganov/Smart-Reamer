@@ -14,6 +14,7 @@
 
 bool pair_mode         = false;
 bool unlock_request    = false;
+bool reamer_locked	   = false;
 
 void on_unlock_button(bool pressed) {
 	if (pressed) {
@@ -27,15 +28,15 @@ void on_pair_button(bool pressed) {
 	smart_reamer_ex_log_info("BUTTON", "Pair button: %s", pressed ? "ON" : "OFF");
 }
 
-Button button_unlock(BUTTON_UNLOCK, on_unlock_button);
-Button button_pair(BUTTON_PAIR, on_pair_button);
-MagneticSensor magnetic_sensor;
-
 Params          params;
 Clock           clock;
 Measure         measure(clock);
 ErrorTracker    error_tracker(measure);
 Motor			motor;
+
+Button button_unlock(BUTTON_UNLOCK, on_unlock_button, clock);
+Button button_pair(BUTTON_PAIR, on_pair_button, clock);
+MagneticSensor magnetic_sensor;
 
 Measureable* measureables[] = {
 	&params,
@@ -75,8 +76,7 @@ void smart_reamer_edit_config(const char* name, const char* value_str) {
 }
 
 bool smart_reamer_is_locked(void) {
-	// Delegate to the magnetic sensor, which is updated in the main loop.
-	return magnetic_sensor.is_locked();
+	return reamer_locked;
 }
 
 bool smart_reamer_is_pair_mode(void) {
