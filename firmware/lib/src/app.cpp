@@ -8,6 +8,7 @@
 #include "error_tracker.h"
 #include "motor.h"
 #include "button.h"
+#include "magnetic_sensor.h"
 
 #include <cstring>
 
@@ -29,6 +30,7 @@ void on_pair_button(bool pressed) {
 
 Button button_lock(BUTTON_UNLOCK, on_lock_button);
 Button button_pair(BUTTON_PAIR, on_pair_button);
+MagneticSensor magnetic_sensor;
 
 Params          params;
 Clock           clock;
@@ -41,6 +43,7 @@ Measureable* measureables[] = {
 	&clock,
 	&error_tracker,
 	&motor,
+	&magnetic_sensor,
 	nullptr
 };
 
@@ -97,6 +100,8 @@ void smart_reamer_main_loop_begin() {
 
 	button_lock.begin();
 	button_pair.begin();
+
+	magnetic_sensor.begin();
 }
 
 void smart_reamer_main_loop_body() {
@@ -108,4 +113,6 @@ void smart_reamer_main_loop_body() {
 
 	button_lock.update();
 	button_pair.update();
+
+	magnetic_sensor.update();
 }

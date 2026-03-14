@@ -15,3 +15,4 @@ const float MOTOR_SPEED            = 200;
 const uint8_t BUTTON_UNLOCK = 17;
 const uint8_t BUTTON_PAIR = 18;
 const uint8_t MAGNET_SENSOR = 19;
+const uint8_t MAGNET_SENSOR_LED = 21;
