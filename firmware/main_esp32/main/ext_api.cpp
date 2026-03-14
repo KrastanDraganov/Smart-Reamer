@@ -160,6 +160,7 @@ extern "C" {
 void smart_reamer_ex_motor_init() {
 	motor_stepper.setEnablePin(MOTOR_ENABLE_PIN);
 	motor_stepper.setPinsInverted(false, false, MOTOR_ENABLE_INVERTED);
+	motor_stepper.enableOutputs();
 	motor_stepper.setMaxSpeed(MOTOR_MAX_SPEED);
 	motor_stepper.setAcceleration(MOTOR_ACCELERATION);
 	motor_stepper.setSpeed(MOTOR_SPEED);
@@ -175,6 +176,10 @@ long smart_reamer_ex_motor_current_position() {
 
 void smart_reamer_ex_motor_go_to_steps(long position) {
 	motor_stepper.moveTo(position);
+}
+
+void smart_reamer_ex_motor_set_current_position(long position) {
+	motor_stepper.setCurrentPosition(position);
 }
 
 }

@@ -8,6 +8,14 @@ void Motor::begin() {
 	smart_reamer_ex_motor_init();
 	this->load_position();
 	this->load_state();
+
+	smart_reamer_ex_motor_set_current_position(this->current_position);
+
+	if (this->current_position >= POSITION_CLOSED) {
+		this->move_to(POSITION_OPEN);
+	} else {
+		this->move_to(POSITION_CLOSED);
+	}
 }
 
 void Motor::update() {
@@ -23,8 +31,10 @@ void Motor::update() {
 		if (this->current_position == this->target_position) {
 			if (this->target_position == POSITION_OPEN) {
 				this->current_state = MotorState::Opened;
+				this->move_to(POSITION_CLOSED);
 			} else if (this->target_position == POSITION_CLOSED) {
 				this->current_state = MotorState::Closed;
+				this->move_to(POSITION_OPEN);
 			}
 			this->save_state();
 		}
