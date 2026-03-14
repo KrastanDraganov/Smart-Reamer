@@ -9,6 +9,13 @@ Button::Button(uint8_t _pin, std::function<void(bool)> _callback)
 
 void Button::begin() {
 	smart_reamer_ex_gpio_init_input(this->pin);
+
+	bool current_state = smart_reamer_ex_gpio_read(this->pin);
+	uint32_t now       = clock.now_u32();
+
+	this->last_state  = current_state;
+	this->pressed     = current_state;
+	this->last_change = now;
 }
 
 void Button::update() {
