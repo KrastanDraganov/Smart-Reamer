@@ -14,7 +14,7 @@
 #define CFG_WIFI_SSID              "Smart-Reamer"
 #define CFG_WIFI_CHANNEL           4
 #define CFG_WIFI_PASS              "00000000"
-#define CFG_WIFI_MAX_CONN          3
+#define CFG_WIFI_MAX_CONN          10
 
 #define CFG_WIFI_STA_SSID          "FMI-AIR-NEW"
 #define CFG_WIFI_STA_PASS          ""
