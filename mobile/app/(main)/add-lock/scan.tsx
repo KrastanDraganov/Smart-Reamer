@@ -66,7 +66,7 @@ export default function ScanScreen() {
 
   const openWifiSettings = () => {
     if (Platform.OS === 'ios') {
-      Linking.openURL('App-Prefs:WIFI');
+      Linking.openSettings();
     } else {
       ExpoLinking.sendIntent('android.settings.WIFI_SETTINGS');
     }
