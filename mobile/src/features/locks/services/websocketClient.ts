@@ -12,6 +12,29 @@ interface PendingRequest {
   timer: ReturnType<typeof setTimeout>;
 }
 
+interface ConnectOptions {
+  token?: string;
+  /**
+   * Explicit WebSocket scheme. If not provided, `secure` (if set) is used,
+   * otherwise the default is 'wss'.
+   */
+  scheme?: 'ws' | 'wss';
+  /**
+   * Convenience flag to select secure/insecure scheme:
+   *   secure === true  -> 'wss'
+   *   secure === false -> 'ws'
+   */
+  secure?: boolean;
+  /**
+   * Optional port to use for the WebSocket connection.
+   */
+  port?: number;
+  /**
+   * Path component of the WebSocket URL. Defaults to '/ws'.
+   */
+  path?: string;
+}
+
 class LockWebSocketClient {
   private ws: WebSocket | null = null;
   private url = '';
@@ -33,9 +56,41 @@ class LockWebSocketClient {
     this.onConnectionChange = handler;
   }
 
-  connect(ipAddress: string, token?: string): void {
-    this.url = `wss://${ipAddress}/ws`;
-    this.token = token ?? '';
+  connect(ipAddress: string, tokenOrOptions?: string | ConnectOptions): void {
+    let token = '';
+    let scheme: 'ws' | 'wss' | undefined;
+    let port: number | undefined;
+    let path = '/ws';
+
+    if (typeof tokenOrOptions === 'string' || typeof tokenOrOptions === 'undefined') {
+      // Backwards-compatible behavior: second argument is just the token.
+      token = tokenOrOptions ?? '';
+    } else {
+      token = tokenOrOptions.token ?? '';
+      // Determine scheme: explicit scheme wins, otherwise derive from `secure`.
+      if (tokenOrOptions.scheme) {
+        scheme = tokenOrOptions.scheme;
+      } else if (typeof tokenOrOptions.secure === 'boolean') {
+        scheme = tokenOrOptions.secure ? 'wss' : 'ws';
+      }
+      if (typeof tokenOrOptions.port === 'number') {
+        port = tokenOrOptions.port;
+      }
+      if (tokenOrOptions.path) {
+        path = tokenOrOptions.path;
+      }
+    }
+
+    // If a full WebSocket URL is provided, use it as-is.
+    if (/^wss?:\/\//i.test(ipAddress)) {
+      this.url = ipAddress;
+    } else {
+      const effectiveScheme: 'ws' | 'wss' = scheme ?? 'wss';
+      const hostPort = port ? `${ipAddress}:${port}` : ipAddress;
+      this.url = `${effectiveScheme}://${hostPort}${path}`;
+    }
+
+    this.token = token;
     this.shouldReconnect = true;
     this.reconnectAttempt = 0;
     this.openConnection();
