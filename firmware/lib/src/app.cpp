@@ -12,7 +12,6 @@
 
 #include <cstring>
 
-bool reamer_locked     = false;
 bool pair_mode         = false;
 bool unlock_request    = false;
 
@@ -76,7 +75,8 @@ void smart_reamer_edit_config(const char* name, const char* value_str) {
 }
 
 bool smart_reamer_is_locked(void) {
-	return reamer_locked;
+	// Delegate to the magnetic sensor, which is updated in the main loop.
+	return magnetic_sensor.is_locked();
 }
 
 bool smart_reamer_is_pair_mode(void) {
