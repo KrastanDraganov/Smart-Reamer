@@ -40,10 +40,7 @@ void smart_reamer_ex_log_err(const char* tag, const char* format, ...) {
 }
 
 void smart_reamer_ex_blocking_delay(uint32_t ms) {
-	uint32_t start = esp_timer_get_time();
-	while (esp_timer_get_time() - start < ms * 1000) {
-		esp_task_wdt_reset();
-	}
+	vTaskDelay(ms / portTICK_PERIOD_MS);
 }
 
 void smart_reamer_ex_modbus_uart_begin(uint8_t uart_number, uint32_t baudrate, uint8_t tx_pin, uint8_t rx_pin, uint8_t de_pin) {
@@ -158,9 +155,11 @@ static stepper_motor motor_stepper(
 extern "C" {
 
 void smart_reamer_ex_motor_init() {
+	motor_stepper.setEnablePin(MOTOR_ENABLE_PIN);
+	motor_stepper.setPinsInverted(false, false, MOTOR_ENABLE_INVERTED);
+	motor_stepper.enableOutputs();
 	motor_stepper.setMaxSpeed(MOTOR_MAX_SPEED);
 	motor_stepper.setAcceleration(MOTOR_ACCELERATION);
-	motor_stepper.setSpeed(MOTOR_SPEED);
 }
 
 void smart_reamer_ex_motor_run() {
@@ -173,6 +172,35 @@ long smart_reamer_ex_motor_current_position() {
 
 void smart_reamer_ex_motor_go_to_steps(long position) {
 	motor_stepper.moveTo(position);
+}
+
+void smart_reamer_ex_motor_set_current_position(long position) {
+	motor_stepper.setCurrentPosition(position);
+}
+
+void smart_reamer_ex_gpio_init_input(uint8_t pin) {
+	gpio_reset_pin((gpio_num_t)pin);
+	gpio_set_direction((gpio_num_t)pin, GPIO_MODE_INPUT);
+	gpio_set_pull_mode((gpio_num_t)pin, GPIO_FLOATING);
+}
+
+void smart_reamer_ex_gpio_init_input_pullup(uint8_t pin) {
+	gpio_reset_pin((gpio_num_t)pin);
+	gpio_set_direction((gpio_num_t)pin, GPIO_MODE_INPUT);
+	gpio_set_pull_mode((gpio_num_t)pin, GPIO_PULLUP_ONLY);
+}
+
+bool smart_reamer_ex_gpio_read(uint8_t pin) {
+	return gpio_get_level((gpio_num_t)pin) == 1;
+}
+
+void smart_reamer_ex_gpio_init_output(uint8_t pin) {
+	gpio_reset_pin((gpio_num_t)pin);
+	gpio_set_direction((gpio_num_t)pin, GPIO_MODE_OUTPUT);
+}
+
+void smart_reamer_ex_gpio_write(uint8_t pin, bool high) {
+	gpio_set_level((gpio_num_t)pin, high ? 1 : 0);
 }
 
 }

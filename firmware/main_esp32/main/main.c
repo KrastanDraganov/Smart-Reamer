@@ -22,11 +22,6 @@
 void smart_reamer_main_loop(void* arg) {
 	ESP_LOGI("main_loop", "parking platform main loop starting on core %d", xPortGetCoreID());
 
-	// delete the watchdog subscription for the idle task for this core, since we
-	// will use the core exclusively and the idle task will never run
-	esp_task_wdt_delete(xTaskGetIdleTaskHandleForCore(PARKING_PLATFORM_MAIN_LOOP_CORE_ID));
-
-	// add *this* task to the WDT instead
 	esp_task_wdt_add(NULL);
 
 	smart_reamer_main_loop_begin();
@@ -34,6 +29,7 @@ void smart_reamer_main_loop(void* arg) {
 		smart_reamer_update_time(esp_timer_get_time());
 		smart_reamer_main_loop_body();
 		esp_task_wdt_reset();
+		vTaskDelay(1);
 	}
 }
 
