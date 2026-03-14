@@ -102,8 +102,6 @@ void wifi_init_softap(void) {
 	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
 	ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &wifi_config));
 	ESP_ERROR_CHECK(esp_wifi_start());
-
-	ESP_LOGI(TAG, "wifi_init_softap finished. SSID:%s password:%s channel:%d", CFG_WIFI_SSID, CFG_WIFI_PASS, CFG_WIFI_CHANNEL);
 }
 
 bool wifi_init_sta(void) {
@@ -156,10 +154,10 @@ bool wifi_init_sta(void) {
 	/* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually
 	 * happened. */
 	if (bits & WIFI_CONNECTED_BIT) {
-		ESP_LOGI(TAG, "connected to ap SSID:%s password:%s", CFG_WIFI_STA_SSID, CFG_WIFI_STA_PASS);
+		ESP_LOGI(TAG, "connected to ap SSID:%s", CFG_WIFI_STA_SSID);
 		return true;
 	} else if (bits & WIFI_FAIL_BIT) {
-		ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s", CFG_WIFI_STA_SSID, CFG_WIFI_STA_PASS);
+		ESP_LOGI(TAG, "Failed to connect to SSID:%s", CFG_WIFI_STA_SSID);
 	} else {
 		ESP_LOGE(TAG, "UNEXPECTED EVENT");
 	}

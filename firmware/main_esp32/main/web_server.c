@@ -11,6 +11,9 @@
 #include <esp_timer.h>
 #include <esp_task_wdt.h>
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "config.h"
 #include "websocket.h"
 #include "app.h"
@@ -58,8 +61,31 @@ esp_err_t root_get_handler(httpd_req_t* req) {
 
 esp_err_t measure_get_handler(httpd_req_t* req) {
 	httpd_resp_set_type(req, "application/json");
-	char* buf = smart_reamer_measure_get_json();
-	httpd_resp_send(req, buf, HTTPD_RESP_USE_STRLEN);
+
+	char* fragment = smart_reamer_measure_get_json();
+	if (fragment == NULL) {
+		httpd_resp_send_500(req);
+		return ESP_FAIL;
+	}
+
+	size_t fragment_len = strlen(fragment);
+	/* +2 for surrounding braces, +1 for null terminator */
+	size_t total_len = fragment_len + 2;
+	char* json = (char*)malloc(total_len + 1);
+	if (json == NULL) {
+		smart_reamer_measure_finished_using_json();
+		httpd_resp_send_500(req);
+		return ESP_FAIL;
+	}
+
+	json[0] = '{';
+	memcpy(json + 1, fragment, fragment_len);
+	json[total_len - 1] = '}';
+	json[total_len] = '\0';
+
+	httpd_resp_send(req, json, HTTPD_RESP_USE_STRLEN);
+
+	free(json);
 	smart_reamer_measure_finished_using_json();
 
 	return ESP_OK;

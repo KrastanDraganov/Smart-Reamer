@@ -2,3 +2,4 @@
 *.swp
 *.swo
 *~
+firmware/main_esp32/main/certs/prvtkey.pem
