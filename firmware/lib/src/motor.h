@@ -12,7 +12,7 @@ enum class MotorState {
 class Motor : public Measureable {
 	public:
 		static constexpr int32_t POSITION_OPEN   = 0;
-		static constexpr int32_t POSITION_CLOSED = -3000;
+		static constexpr int32_t POSITION_CLOSED = 800;
 		static constexpr const char* NVS_KEY_POSITION  = "motor_pos";
 		static constexpr const char* NVS_KEY_STATE     = "motor_state";
 

@@ -160,7 +160,6 @@ void smart_reamer_ex_motor_init() {
 	motor_stepper.enableOutputs();
 	motor_stepper.setMaxSpeed(MOTOR_MAX_SPEED);
 	motor_stepper.setAcceleration(MOTOR_ACCELERATION);
-	motor_stepper.setSpeed(MOTOR_SPEED);
 }
 
 void smart_reamer_ex_motor_run() {
