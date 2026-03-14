@@ -8,7 +8,9 @@ static const char* TAG = "mdns_service";
 
 void mdns_service_init(void) {
 	esp_err_t err = mdns_init();
-	if (err != ESP_OK) {
+	if (err == ESP_ERR_INVALID_STATE) {
+		ESP_LOGD(TAG, "mDNS already initialized, continuing to update service");
+	} else if (err != ESP_OK) {
 		ESP_LOGE(TAG, "mDNS init failed: %s", esp_err_to_name(err));
 		return;
 	}
