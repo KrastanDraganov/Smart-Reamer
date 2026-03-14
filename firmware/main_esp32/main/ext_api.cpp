@@ -40,10 +40,7 @@ void smart_reamer_ex_log_err(const char* tag, const char* format, ...) {
 }
 
 void smart_reamer_ex_blocking_delay(uint32_t ms) {
-	uint32_t start = esp_timer_get_time();
-	while (esp_timer_get_time() - start < ms * 1000) {
-		esp_task_wdt_reset();
-	}
+	vTaskDelay(ms / portTICK_PERIOD_MS);
 }
 
 void smart_reamer_ex_modbus_uart_begin(uint8_t uart_number, uint32_t baudrate, uint8_t tx_pin, uint8_t rx_pin, uint8_t de_pin) {
