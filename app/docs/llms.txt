@@ -1,0 +1,369 @@
+# LLM Context - React Native Expo Template
+
+## What This Project Is
+
+A production-grade React Native Expo base template. It provides a complete, working foundation for building mobile applications with authentication, theming, internationalization, API integration, error handling, and testing.
+
+The project is designed to be the most AI-friendly React Native template available. All patterns are codified in documentation and rule files that AI tools can read.
+
+## Tech Stack
+
+Framework: React Native 0.83.2 with Expo SDK 55
+Routing: expo-router (file-based, typed routes like Next.js but for React Native)
+Language: TypeScript 5.9 with strict mode enabled
+Styling: react-native-unistyles 3.x (design token system with light/dark modes)
+Server State: @tanstack/react-query (data fetching, caching, mutations)
+Client State: Zustand (auth session, UI state, user preferences)
+Backend: Supabase (auth + database) with graceful degradation if unconfigured
+HTTP Client: Axios with request/response interceptors
+i18n: react-i18next with English and Arabic locales, RTL support
+Storage: react-native-mmkv (fast synchronous persistent storage)
+Forms: react-hook-form + zod/v4 (schema-first validation)
+Testing: Jest + jest-expo
+Linting: ESLint 9 flat config + Prettier
+
+## Path Aliases
+
+@/* maps to src/*
+~/* maps to app/*
+
+Always use these aliases. Never use relative paths that climb more than one directory level.
+
+## Directory Structure
+
+app/                          Expo Router file-based screens
+  _layout.tsx                 Root: GestureHandlerRootView > ErrorBoundary > QueryProvider > BottomSheetModalProvider > AppContent
+  +not-found.tsx              404 screen
+  (main)/_layout.tsx          Main stack
+  (main)/(tabs)/_layout.tsx   Tab bar layout
+  (main)/(tabs)/index.tsx     Home tab screen
+  (main)/(tabs)/settings.tsx  Settings tab screen
+
+src/
+  common/components/          33 shared UI components (see Components section)
+  config/env.ts               Centralized env vars via EXPO_PUBLIC_* prefix
+  features/                   Feature modules (auth is the example)
+    auth/
+      components/             LoginForm, RegisterForm
+      services/authService.ts login, register, logout, getSession
+      schemas/loginSchema.ts  Zod schemas
+  hooks/
+    useBottomPadding.ts       Safe area bottom padding
+    useNetworkStatus.ts       Network connectivity alerts
+    useProtectedRoute.ts      Redirects unauthenticated users to login
+    useScreenDimensions.ts    Responsive screen size helpers
+  i18n/
+    config.ts                 i18next init (reads saved language from MMKV, falls back to device locale)
+    locales/en.json           English translations
+    locales/ar.json           Arabic translations
+  integrations/supabase.ts    Supabase client (null if env vars missing)
+  providers/
+    index.ts                  QueryProvider export
+    auth/authStore.ts         useAuthStore (Zustand) + useAuthInit hook
+    query/mmkvPersister.ts    React Query persistence via MMKV
+  services/api/client.ts      Axios instance with auth + error interceptors
+  theme/
+    light-theme.ts            Light mode color tokens (indigo primary, teal accent)
+    dark-theme.ts             Dark mode color tokens
+    metrics.ts                rf(), hs(), vs(), spacing, borderRadius, iconSize, fontSize
+    themeManager.ts           Theme initialization from storage
+  types/                      Global TypeScript types
+  utils/storage/
+    storage.ts                MMKV wrapper (getItem, setItem, removeItem)
+    useStorage.ts             React hooks: useStorage, useStorageBoolean
+    constants.ts              STORAGE_KEYS object
+
+## The 33 Shared Components
+
+All in src/common/components/. Import from barrel: import { Button } from '@/common/components/Button'
+
+Action:
+  Button - variant: primary/secondary/outline/ghost, size: sm/md/lg, loading, disabled, leftIcon, rightIcon, fullWidth
+  IconButton - icon-only button, variant: primary/secondary/outline/ghost, size: sm/md/lg, accessibilityLabel required
+
+Data Display:
+  Avatar - image/initials/icon fallback, size: xs/sm/md/lg/xl
+  Badge - variant: solid/outline/dot, colorScheme: primary/success/error/warning/info, count, maxCount
+  Card - variant: default/elevated/outlined, pressable, onPress
+  Chip - label, variant: solid/outline, selected, onPress, onClose, icon, disabled
+  ListItem - title, subtitle, left, right, onPress, divider, disabled
+  Text - variant: h1/h2/h3/body/bodySmall/caption/label/overline, weight, color, align
+
+Disclosure:
+  Accordion - items array (id/title/content/disabled), multiple, defaultExpanded
+
+Feedback:
+  EmptyState - title, message, icon, actionLabel, onAction
+  ErrorBoundary - children, fallback (React class component boundary)
+  Loading - message, fullScreen, size: small/large
+  ProgressBar - value 0-100, size: sm/md/lg, colorScheme, indeterminate
+  Skeleton - variant: text/circle/rect, width, height, animated
+  Snackbar - visible, message, variant: default/success/error, duration, action, onDismiss
+
+Form:
+  Checkbox - checked, onChange, label, disabled
+  FormField - name, control (RHF), label, required, children (wraps RHF Controller)
+  Input - label, error, helperText, disabled, leftIcon, rightIcon (extends TextInputProps)
+  RadioGroup - value, onChange, options array (value/label/disabled), orientation: vertical/horizontal
+  SearchBar - value, onChangeText, placeholder, onSubmit, onClear, loading, autoFocus
+  SegmentedControl - value, onChange, options array (value/label/icon), size: sm/md, disabled
+  Select - value, onChange, options array (label/value/disabled), label, placeholder, error, disabled
+  Switch - value, onValueChange, label, disabled
+  TextArea - extends Input minus secureTextEntry, numberOfLines, maxLength, showCount
+
+Layout:
+  Divider - orientation: horizontal/vertical, bold, inset
+  ScreenContainer - scrollable, padded, edges: top/bottom, style (use as screen root)
+
+Overlay:
+  Dialog - visible, onDismiss, title, message, actions array (label/onPress/variant), children
+  Menu - visible, onDismiss, anchor, items array (label/onPress/icon/disabled/destructive)
+
+Typography:
+  Icon - name (Ionicons), variant: primary/secondary/tertiary/muted/inverse/accent, size, color
+
+## Theme Color Tokens
+
+Light mode values:
+
+brand.primary = #6366F1 (indigo)
+brand.secondary = #1E293B (dark slate)
+brand.tertiary = #14B8A6 (teal)
+brand.primaryVariant = #4F46E5
+
+background.app = #F8FAFC
+background.surface = #FFFFFF
+background.surfaceAlt = #F1F5F9
+background.elevated = #FFFFFF
+background.input = #F1F5F9
+background.disabled = #E2E8F0
+background.modal = #FFFFFF
+
+text.primary = #0F172A
+text.secondary = #334155
+text.tertiary = #64748B
+text.muted = #94A3B8
+text.inverse = #FFFFFF
+text.accent = #14B8A6
+text.link = #6366F1
+
+border.default = #E2E8F0
+border.subtle = #F1F5F9
+border.strong = #CBD5E1
+border.focus = #6366F1
+border.disabled = #E2E8F0
+
+icon.primary = #6366F1
+icon.secondary = #1E293B
+icon.tertiary = #94A3B8
+icon.muted = #CBD5E1
+icon.inverse = #FFFFFF
+icon.accent = #14B8A6
+
+state.success = #10B981
+state.successBg = #ECFDF5
+state.error = #EF4444
+state.errorBg = rgba(239, 68, 68, 0.12)
+state.warning = #F59E0B
+state.warningBg = rgba(245, 158, 11, 0.12)
+state.info = #3B82F6
+state.infoBg = rgba(59, 130, 246, 0.12)
+
+overlay.modal = rgba(0,0,0,0.5)
+overlay.pressed = rgba(99,102,241,0.12)
+overlay.hover = rgba(99,102,241,0.08)
+overlay.ripple = rgba(255,255,255,0.25)
+
+## Metrics and Spacing
+
+Spacing (horizontal, via hs() scaling):
+theme.metrics.spacing.p4 = hs(4)
+theme.metrics.spacing.p8 = hs(8)
+theme.metrics.spacing.p12 = hs(12)
+theme.metrics.spacing.p16 = hs(16)
+theme.metrics.spacing.p20 = hs(20)
+theme.metrics.spacing.p24 = hs(24)
+theme.metrics.spacing.p32 = hs(32)
+theme.metrics.spacing.p48 = hs(48)
+theme.metrics.spacing.p64 = hs(64)
+theme.metrics.spacing.p120 = hs(120)
+
+Spacing vertical (via vs() scaling): same keys under theme.metrics.spacingV.*
+
+Border radius:
+theme.metrics.borderRadius.xs = hs(4)
+theme.metrics.borderRadius.sm = hs(6)
+theme.metrics.borderRadius.md = hs(8)
+theme.metrics.borderRadius.lg = hs(12)
+theme.metrics.borderRadius.xl = hs(16)
+theme.metrics.borderRadius.full = 999
+
+Icon sizes:
+theme.metrics.iconSize.xs = hs(14)
+theme.metrics.iconSize.sm = hs(16)
+theme.metrics.iconSize.md = hs(18)
+theme.metrics.iconSize.lg = hs(20)
+theme.metrics.iconSize.xl = hs(24)
+
+Font sizes (responsive via rf()):
+theme.fonts.size.xxs = rf(10)
+theme.fonts.size.xs = rf(12)
+theme.fonts.size.sm = rf(14)
+theme.fonts.size.md = rf(16)
+theme.fonts.size.lg = rf(18)
+theme.fonts.size.xl = rf(20)
+theme.fonts.size.2xl = rf(24)
+theme.fonts.size.3xl = rf(30)
+theme.fonts.size.4xl = rf(36)
+
+## Critical Patterns
+
+### StyleSheet (ALWAYS unistyles, ALWAYS theme callback)
+
+import { StyleSheet } from 'react-native-unistyles';
+
+const styles = StyleSheet.create((theme) => ({
+  container: {
+    padding: theme.metrics.spacing.p16,
+    backgroundColor: theme.colors.background.surface,
+    borderRadius: theme.metrics.borderRadius.md,
+  },
+}));
+
+### Auth Store (Zustand, selectors required)
+
+import { useAuthStore } from '@/providers/auth/authStore';
+const user = useAuthStore((s) => s.user);
+const session = useAuthStore((s) => s.session);
+const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+// Outside React: useAuthStore.getState().session
+
+### API Client (Axios with interceptors)
+
+import { api } from '@/services/api';
+const data = await api.get<Product[]>('/products').then((r) => r.data);
+const item = await api.post<Product>('/products', payload).then((r) => r.data);
+
+### React Query (server state)
+
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+export function useProducts() {
+  return useQuery({
+    queryKey: ['products'],
+    queryFn: () => api.get<Product[]>('/products').then((r) => r.data),
+  });
+}
+
+### Zustand (client state)
+
+import { create } from 'zustand';
+export const useMyStore = create<MyState>((set) => ({
+  items: [],
+  addItem: (item) => set((state) => ({ items: [...state.items, item] })),
+}));
+// Always use selectors: useMyStore((s) => s.items) not useMyStore()
+
+### i18n (all UI strings must be translated)
+
+const { t } = useTranslation();
+<Text>{t('home.welcome')}</Text>
+// Update BOTH en.json AND ar.json
+
+### Forms
+
+import { z } from 'zod/v4';
+const schema = z.object({ email: z.email('validation.emailInvalid') });
+type FormData = z.infer<typeof schema>;
+const { control, handleSubmit } = useForm<FormData>({ resolver: zodResolver(schema) });
+
+### Storage
+
+import { useStorage } from '@/utils/storage';
+import { STORAGE_KEYS } from '@/utils/storage/constants';
+const { value, setValue } = useStorage<string>(STORAGE_KEYS.preferences.language);
+
+### Screen template
+
+import { useTranslation } from 'react-i18next';
+import { StyleSheet } from 'react-native-unistyles';
+import { ScreenContainer } from '@/common/components/ScreenContainer';
+import { Text } from '@/common/components/Text';
+
+export default function MyScreen() {
+  const { t } = useTranslation();
+  return (
+    <ScreenContainer scrollable padded>
+      <Text variant="h1">{t('screen.title')}</Text>
+    </ScreenContainer>
+  );
+}
+
+const styles = StyleSheet.create((theme) => ({
+  // styles here
+}));
+
+### Feature module structure
+
+src/features/<feature>/
+  components/   - Feature-specific UI
+  services/     - Pure async API functions (no React)
+  hooks/        - useQuery/useMutation wrappers + custom hooks
+  stores/       - Zustand stores (if needed)
+  types/        - TypeScript interfaces
+  schemas/      - Zod validation schemas
+  constants/    - Constants
+
+## Hard Rules (Never Violate)
+
+1. Never use import { StyleSheet } from 'react-native' - must be react-native-unistyles
+2. Never use inline styles: style={{ padding: 16 }} is always wrong
+3. Never use color literals: '#6366F1' or 'white' in styles
+4. Never hardcode UI strings: <Text>Hello</Text> - use t('key')
+5. Never use any types - TypeScript strict mode is enforced
+6. Never create React Context for auth - use useAuthStore
+7. Never call useMyStore() without a selector function
+8. Never import { z } from 'zod' - must be zod/v4
+9. Never use export default from component files in src/ (app/ screens are the exception)
+10. Never call fetch() directly - use api from @/services/api
+11. Never add keys to only en.json without also updating ar.json
+12. Never skip accessibilityRole and accessibilityLabel on interactive elements
+13. Never import from implementation file - use barrel (Button not Button/Button)
+14. Never use console.log in production code - guard with if (__DEV__)
+
+## Commit Format
+
+<type>(<scope>): <subject>
+
+Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
+
+Examples:
+feat(products): add product listing with search
+fix(button): correct dark mode disabled color
+test(input): add validation error display tests
+
+## Commands
+
+npm start               Start Expo dev server
+npm run ios             iOS simulator
+npm run android         Android emulator
+npm run type-check      TypeScript check (must pass zero errors)
+npm run lint            ESLint
+npm run lint:fix        Auto-fix ESLint
+npm run format          Prettier
+npm run validate        All checks (type-check + lint + format:check)
+npm test                Jest
+npm run test:coverage   Coverage report
+
+## Documentation Files
+
+CONVENTIONS.md              Complete coding conventions (source of truth)
+AGENTS.md                   Universal agent instructions (this is a complementary file)
+docs/AI-GUIDE.md            Pattern cookbook with 10 step-by-step recipes and file templates
+docs/COMPONENTS.md          Full API reference for all 33 components with prop tables
+docs/llms.txt               This file - plain text LLM context
+.cursorrules                Cursor IDE rules
+.cursor/rules/project.mdc   Cursor MDC format rules
+.windsurfrules              Windsurf/Codeium rules
+.clinerules                 Cline rules
+.github/copilot-instructions.md  GitHub Copilot instructions
+CLAUDE.md                   Claude Code project instructions
