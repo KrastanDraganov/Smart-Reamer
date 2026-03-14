@@ -104,6 +104,10 @@ class LockWebSocketClient {
 
   private openConnection(): void {
     if (this.ws) {
+      // Existing connection is being replaced: mark disconnected and reject pending requests.
+      this.setConnected(false);
+      this.cleanupPending();
+
       this.ws.onopen = null;
       this.ws.onmessage = null;
       this.ws.onerror = null;
