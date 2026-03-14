@@ -69,7 +69,6 @@ void Motor::load_position() {
 	uint32_t value = 0;
 	smart_reamer_ex_nvs_read_u32(NVS_KEY_POSITION, &value);
 	this->current_position = (int32_t)value;
-	smart_reamer_ex_motor_go_to_steps(this->current_position);
 }
 
 void Motor::save_state() {
