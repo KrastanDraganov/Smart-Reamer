@@ -1,0 +1,224 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "retry": "Retry",
+    "search": "Search",
+    "settings": "Settings",
+    "close": "Close",
+    "edit": "Edit",
+    "submit": "Submit",
+    "ok": "OK"
+  },
+  "tabs": {
+    "home": "Locks",
+    "showcase": "Showcase",
+    "settings": "Settings"
+  },
+  "home": {
+    "welcome": "Welcome",
+    "subtitle": "Your app is ready to go.",
+    "greetingMorning": "Good morning",
+    "greetingAfternoon": "Good afternoon",
+    "greetingEvening": "Good evening",
+    "userName": "Alex Johnson",
+    "searchPlaceholder": "Search anything...",
+    "quickActions": {
+      "send": "Send",
+      "receive": "Receive",
+      "pay": "Pay",
+      "more": "More"
+    },
+    "featured": {
+      "title": "Featured",
+      "seeAll": "See all",
+      "card1Title": "Design System",
+      "card1Subtitle": "Build consistent UIs with tokens",
+      "card2Title": "Analytics",
+      "card2Subtitle": "Track performance metrics",
+      "card3Title": "Integrations",
+      "card3Subtitle": "Connect your favorite tools"
+    },
+    "stats": {
+      "projects": "Projects",
+      "tasks": "Tasks",
+      "messages": "Messages"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "seeAll": "See all",
+      "item1Title": "New project created",
+      "item1Subtitle": "Mobile App Redesign",
+      "item1Time": "2m ago",
+      "item2Title": "Task completed",
+      "item2Subtitle": "Update design tokens",
+      "item2Time": "15m ago",
+      "item3Title": "Message received",
+      "item3Subtitle": "Sarah shared a file",
+      "item3Time": "1h ago",
+      "item4Title": "Payment processed",
+      "item4Subtitle": "Invoice #1042 paid",
+      "item4Time": "3h ago"
+    }
+  },
+  "locks": {
+    "title": "My Locks",
+    "subtitle": "{{count}} lock connected",
+    "subtitle_plural": "{{count}} locks connected",
+    "addLock": "Add Lock",
+    "online": "Online",
+    "offline": "Offline",
+    "locked": "Locked",
+    "unlocked": "Unlocked",
+    "toggling": "Toggling...",
+    "cardAccessibility": "Lock {{name}}",
+    "actions": {
+      "lock": "Lock",
+      "unlock": "Unlock"
+    },
+    "empty": {
+      "title": "No Locks Yet",
+      "message": "Tap the button above to connect your first smart lock."
+    },
+    "delete": {
+      "title": "Delete Lock",
+      "message": "Are you sure you want to remove this lock? You can re-add it later."
+    },
+    "rename": {
+      "title": "Rename Lock",
+      "message": "Enter a new name for this lock."
+    },
+    "history": {
+      "title": "Activity",
+      "empty": "No activity recorded yet.",
+      "locked": "Locked",
+      "unlocked": "Unlocked",
+      "source": {
+        "app": "Via app",
+        "manual": "Manual",
+        "auto": "Auto-lock"
+      }
+    },
+    "validation": {
+      "nameRequired": "Please enter a name for the lock",
+      "nameTooLong": "Name must be 30 characters or less"
+    }
+  },
+  "discovery": {
+    "scan": {
+      "title": "Scan for Devices",
+      "searching": "Scanning...",
+      "done": "Scan Complete",
+      "hint": "Make sure your lock is powered on and connected to the same WiFi network.",
+      "noDevices": "No devices found. Make sure your lock is on and try again.",
+      "foundDevices": "Found {{count}} device",
+      "foundDevices_plural": "Found {{count}} devices",
+      "retry": "Scan Again"
+    },
+    "select": {
+      "title": "Select Device",
+      "subtitle": "Choose the lock you want to add.",
+      "noDevices": "No devices discovered yet."
+    },
+    "name": {
+      "title": "Name Your Lock",
+      "label": "Lock Name",
+      "placeholder": "e.g., Front Door",
+      "confirm": "Add Lock"
+    }
+  },
+  "actions": {
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "back": "Back"
+  },
+  "settings": {
+    "title": "Settings",
+    "appName": "App",
+    "appNameValue": "Smart Reamer",
+    "appearance": "Appearance",
+    "darkMode": "Dark Mode",
+    "language": "Language",
+    "notifications": "Notifications",
+    "haptics": "Haptic Feedback",
+    "about": "About",
+    "version": "Version",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "profile": {
+      "name": "Alex Johnson",
+      "email": "alex@example.com",
+      "editProfile": "Edit Profile"
+    },
+    "sections": {
+      "account": "Account",
+      "preferences": "Preferences",
+      "support": "Support",
+      "danger": "Danger Zone"
+    },
+    "account": {
+      "profile": "Profile",
+      "profileSubtitle": "Manage your personal info",
+      "security": "Security",
+      "securitySubtitle": "Password & authentication",
+      "billing": "Billing",
+      "billingSubtitle": "Plans & payment methods",
+      "notifications": "Notifications",
+      "notificationsSubtitle": "Push & email preferences"
+    },
+    "preferences": {
+      "pushNotifications": "Push Notifications",
+      "appIcon": "App Icon",
+      "appIconSubtitle": "Choose your icon style"
+    },
+    "support": {
+      "helpCenter": "Help Center",
+      "helpCenterSubtitle": "FAQs & guides",
+      "feedback": "Send Feedback",
+      "feedbackSubtitle": "Help us improve",
+      "aboutSubtitle": "Version & legal info"
+    },
+    "danger": {
+      "logout": "Log Out",
+      "logoutSubtitle": "Sign out of your account",
+      "deleteAccount": "Delete Account",
+      "deleteAccountSubtitle": "Permanently remove your data"
+    }
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "message": "The app ran into an unexpected error. Please try again.",
+    "retry": "Try Again"
+  },
+  "network": {
+    "offline": "You appear to be offline",
+    "online": "Back online"
+  },
+  "notFound": {
+    "title": "Not Found",
+    "message": "This screen does not exist.",
+    "goHome": "Go to home screen"
+  },
+  "errors": {
+    "title": "Error",
+    "generic": "Something went wrong. Please try again.",
+    "network": "Network error. Check your connection.",
+    "auth": "Authentication failed."
+  },
+  "validation": {
+    "required": "This field is required",
+    "emailInvalid": "Please enter a valid email address",
+    "passwordMin": "Password must be at least 8 characters",
+    "passwordMismatch": "Passwords do not match",
+    "usernameMin": "Username must be at least 3 characters",
+    "usernameMax": "Username must be at most 20 characters",
+    "usernameFormat": "Username can only contain letters, numbers, and underscores"
+  }
+}
