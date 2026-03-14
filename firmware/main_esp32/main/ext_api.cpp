@@ -7,6 +7,9 @@
 #include <nvs_flash.h>
 #include <esp_task_wdt.h>
 #include <stdio.h>
+#include <cstdarg>
+#include <cstring>
+#include "freertos/FreeRTOS.h"
 
 #include <driver/uart.h>
 #include <driver/gpio.h>
