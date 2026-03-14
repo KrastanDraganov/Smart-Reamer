@@ -139,6 +139,10 @@ export async function addLock(payload: AddLockPayload): Promise<Lock> {
     }
   }
 
+  if (token) {
+    lockWsClient.setToken(token);
+  }
+
   const statusRes = lockWsClient.isConnected
     ? await lockWsClient.send('get_status').catch(() => null)
     : null;
