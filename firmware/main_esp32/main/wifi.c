@@ -25,6 +25,7 @@ static const char* TAG = "wifi";
 static httpd_handle_t global_server;
 
 bool started = false;
+static bool mdns_started = false;
 
 void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
 	static int s_retry_num = 0;
@@ -67,7 +68,10 @@ void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id
 		}
 		global_server = start_webserver();
 		started       = true;
-		mdns_service_init();
+		if (!mdns_started) {
+			mdns_service_init();
+			mdns_started = true;
+		}
 	}
 }
 
