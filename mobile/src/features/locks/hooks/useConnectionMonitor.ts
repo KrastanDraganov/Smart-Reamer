@@ -20,32 +20,58 @@ export function useConnectionMonitor() {
   const reconnectRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const connectToActiveLock = useCallback(() => {
-    const pairedLock = locks.find((l) => l.token && l.ipAddress);
-    if (!pairedLock) return;
+    // Gather all locks that have a token and IP address
+    const pairedLocks = locks.filter((l) => l.token && l.ipAddress);
+    if (pairedLocks.length === 0) return;
 
-    const token = pairedLock.token ?? '';
+    // For now, we maintain a single active WebSocket connection to the first paired lock
+    const activeLock = pairedLocks[0];
+
+    const token = activeLock.token ?? '';
     lockWsClient.setToken(token);
 
+    // Ensure non-active paired locks are marked as disconnected so their state is not stale
+    pairedLocks.slice(1).forEach((lock) => {
+      setConnectionState(lock.id, 'disconnected');
+      updateLock(lock.id, {
+        isOnline: false,
+      });
+    });
+
     lockWsClient.setConnectionChangeHandler((connected) => {
-      setConnectionState(pairedLock.id, connected ? 'connected' : 'disconnected');
+      // Update connection state for the active lock
+      setConnectionState(activeLock.id, connected ? 'connected' : 'disconnected');
+
       if (connected) {
-        lockWsClient.send('get_status').then((res) => {
-          updateLock(pairedLock.id, {
-            isLocked: res.isLocked ?? pairedLock.isLocked,
-            isOnline: true,
-            lastSeen: new Date().toISOString(),
+        lockWsClient
+          .send('get_status')
+          .then((res) => {
+            updateLock(activeLock.id, {
+              isLocked: res.isLocked ?? activeLock.isLocked,
+              isOnline: true,
+              lastSeen: new Date().toISOString(),
+            });
+            queryClient.invalidateQueries({ queryKey: LOCK_KEYS.all });
+          })
+          .catch(() => {
+            // Status fetch failed, state will update on next event
           });
-          queryClient.invalidateQueries({ queryKey: LOCK_KEYS.all });
-        }).catch(() => {
-          // Status fetch failed, state will update on next event
+      } else {
+        // When disconnected, ensure all paired locks are marked offline
+        pairedLocks.forEach((lock) => {
+          setConnectionState(lock.id, 'disconnected');
+          updateLock(lock.id, {
+            isOnline: false,
+          });
         });
       }
     });
 
     unsubRef.current?.();
     unsubRef.current = lockWsClient.on('status_change', (data: WsResponse) => {
-      updateLock(pairedLock.id, {
-        isLocked: data.isLocked ?? pairedLock.isLocked,
+      // Status updates apply to the currently active lock
+      updateLock(activeLock.id, {
+        isLocked: data.isLocked ?? activeLock.isLocked,
         isOnline: true,
         lastSeen: new Date().toISOString(),
       });
@@ -53,8 +79,8 @@ export function useConnectionMonitor() {
     });
 
     if (!lockWsClient.isConnected) {
-      setConnectionState(pairedLock.id, 'connecting');
-      lockWsClient.connect(pairedLock.ipAddress, pairedLock.token);
+      setConnectionState(activeLock.id, 'connecting');
+      lockWsClient.connect(activeLock.ipAddress, activeLock.token);
     }
   }, [locks, setConnectionState, updateLock, queryClient]);
 
