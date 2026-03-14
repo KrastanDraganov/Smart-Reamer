@@ -24,7 +24,6 @@ void Motor::update() {
 	int32_t new_position = (int32_t)smart_reamer_ex_motor_current_position();
 	if (new_position != this->current_position) {
 		this->current_position = new_position;
-		this->save_position();
 	}
 
 	if (this->current_state == MotorState::Moving) {
@@ -36,6 +35,7 @@ void Motor::update() {
 				this->current_state = MotorState::Closed;
 				this->move_to(POSITION_OPEN);
 			}
+			this->save_position();
 			this->save_state();
 		}
 	}
