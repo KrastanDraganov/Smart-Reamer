@@ -15,11 +15,11 @@
 bool pair_mode         = false;
 bool unlock_request    = false;
 
-void on_lock_button(bool pressed) {
+void on_unlock_button(bool pressed) {
 	if (pressed) {
 		unlock_request = true;
 	}
-	smart_reamer_ex_log_info("BUTTON", "Lock button: %s", pressed ? "pressed" : "released");
+	smart_reamer_ex_log_info("BUTTON", "Unlock button: %s", pressed ? "pressed" : "released");
 }
 
 void on_pair_button(bool pressed) {
@@ -27,7 +27,7 @@ void on_pair_button(bool pressed) {
 	smart_reamer_ex_log_info("BUTTON", "Pair button: %s", pressed ? "ON" : "OFF");
 }
 
-Button button_lock(BUTTON_UNLOCK, on_lock_button);
+Button button_unlock(BUTTON_UNLOCK, on_unlock_button);
 Button button_pair(BUTTON_PAIR, on_pair_button);
 MagneticSensor magnetic_sensor;
 
@@ -98,7 +98,7 @@ void smart_reamer_main_loop_begin() {
 
 	motor.begin();
 
-	button_lock.begin();
+	button_unlock.begin();
 	button_pair.begin();
 
 	magnetic_sensor.begin();
@@ -111,7 +111,7 @@ void smart_reamer_main_loop_body() {
 
 	motor.update();
 
-	button_lock.update();
+	button_unlock.update();
 	button_pair.update();
 
 	magnetic_sensor.update();
