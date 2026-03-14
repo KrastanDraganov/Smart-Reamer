@@ -13,7 +13,7 @@ void Button::begin() {
 
 void Button::update() {
 	bool current_state = smart_reamer_ex_gpio_read(this->pin);
-	uint32_t now       = clock.now_u32();
+	uint32_t now       = clock.now_u32() / 1000; // convert microseconds to milliseconds
 
 	if (current_state != this->last_state) {
 		this->last_change = now;
