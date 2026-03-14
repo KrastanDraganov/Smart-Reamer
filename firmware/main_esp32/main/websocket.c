@@ -421,9 +421,11 @@ static esp_err_t ws_handler(httpd_req_t* req) {
 
 		} else if (ws_pkt.type == HTTPD_WS_TYPE_PING) {
 			ws_pkt.type = HTTPD_WS_TYPE_PONG;
+			ret         = httpd_ws_send_frame(req, &ws_pkt);
 		} else if (ws_pkt.type == HTTPD_WS_TYPE_CLOSE) {
 			ws_pkt.len     = 0;
 			ws_pkt.payload = NULL;
+			ret            = httpd_ws_send_frame(req, &ws_pkt);
 		}
 		free(buf);
 		return ret;
