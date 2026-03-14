@@ -16,6 +16,8 @@ enum class MeasureLabel {
 	motor_target_position,
 	motor_state,
 
+	magnetic_sensor_active,
+
 	wifi_status,
 	mqtt_status,
 
@@ -97,6 +99,9 @@ class Measure {
 				return "motor_target_position";
 			case MeasureLabel::motor_state:
 				return "motor_state";
+
+			case MeasureLabel::magnetic_sensor_active:
+				return "magnetic_sensor_active";
 
 			case MeasureLabel::wifi_status:
 				return "wifi_status";

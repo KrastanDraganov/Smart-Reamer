@@ -11,3 +11,8 @@ const bool MOTOR_ENABLE_INVERTED   = true;
 const float MOTOR_MAX_SPEED        = 5000;
 const float MOTOR_ACCELERATION     = 100;
 const float MOTOR_SPEED            = 200;
+
+const uint8_t BUTTON_UNLOCK = 17;
+const uint8_t BUTTON_PAIR = 18;
+const uint8_t MAGNET_SENSOR = 19;
+const uint8_t MAGNET_SENSOR_LED = 21;
