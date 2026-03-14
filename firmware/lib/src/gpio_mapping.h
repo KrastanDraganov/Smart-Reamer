@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 const uint8_t MOTOR_STEP_PIN  = 4;
-const uint8_t MOTOR_DIR_PIN   = 3;
+const uint8_t MOTOR_DIR_PIN   = 16;
 const uint8_t MOTOR_ENABLE_PIN = 2;
 
 const uint8_t MOTOR_INTERFACE_TYPE = 1;
