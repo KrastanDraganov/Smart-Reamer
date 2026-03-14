@@ -14,6 +14,7 @@
 #include "config.h"
 #include "websocket.h"
 #include "web_server.h"
+#include "mdns_service.h"
 
 static EventGroupHandle_t s_wifi_event_group;
 #define WIFI_CONNECTED_BIT BIT0
@@ -66,6 +67,7 @@ void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id
 		}
 		global_server = start_webserver();
 		started       = true;
+		mdns_service_init();
 	}
 }
 

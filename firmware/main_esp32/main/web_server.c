@@ -158,6 +158,9 @@ httpd_handle_t start_webserver(void) {
 	httpd_register_uri_handler(server, &ws);
 	httpd_register_uri_handler(server, &measure_get);
 	httpd_register_uri_handler(server, &measure_enable);
+
+	ws_set_server_handle(server);
+
 	return server;
 }
 
