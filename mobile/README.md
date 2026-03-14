@@ -73,26 +73,39 @@ Most React Native templates give you a blank screen with routing. This one gives
 
 ---
 
+## Prerequisites
+
+- Node.js 18+
+- npm or yarn
+- Expo CLI (`npx expo`)
+- iOS Simulator (macOS) or Android Emulator
+
 ## Quick Start
 
 ```bash
-# 1. Clone the template
-git clone https://github.com/FouadMagdy01/RNCopilot.git my-app
-cd my-app
-
-# 2. Install dependencies
+# 1. Install dependencies
 npm install --legacy-peer-deps
 
-# 3. Set up environment (optional — app works without Supabase)
+# 2. Copy environment file
 cp .env.example .env
 
-# 4. Start developing
+# 3. Start the dev server
 npm start
 ```
 
 Then press `i` for iOS simulator or `a` for Android emulator.
 
 > The app boots and works without Supabase configured. Just add credentials to `.env` when you're ready for auth and backend features.
+
+## Environment Variables
+
+| Variable                             | Required | Description                                                |
+| ------------------------------------ | -------- | ---------------------------------------------------------- |
+| `EXPO_PUBLIC_SUPABASE_URL`           | No       | Supabase project URL                                       |
+| `EXPO_PUBLIC_SUPABASE_PUBLISHED_KEY` | No       | Supabase anon key                                          |
+| `EXPO_PUBLIC_API_BASE_URL`           | No       | Base URL for API client (default: https://api.example.com) |
+| `EXPO_PUBLIC_SENTRY_DSN`             | No       | Sentry DSN for crash reporting                             |
+| `EXPO_PUBLIC_APP_ENV`                | No       | Environment: development, staging, production              |
 
 ---
 
@@ -260,6 +273,19 @@ Each file contains:
 | `npm test`              | Run tests                               |
 | `npm run test:coverage` | Coverage report                         |
 | `npm run migrate`       | Interactive migration wizard            |
+
+## EAS Build
+
+```bash
+# Development build (simulator)
+eas build --profile development --platform ios
+
+# Preview build (internal testing)
+eas build --profile preview --platform all
+
+# Production build
+eas build --profile production --platform all
+```
 
 ---
 

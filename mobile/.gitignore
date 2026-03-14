@@ -2,6 +2,9 @@
 android/
 ios/
 
+# Template documentation (kept locally, not in repo)
+docs/
+
 # OS files
 .DS_Store
 
