@@ -9,6 +9,7 @@ target_sources(smart_reamer_lib PRIVATE
     src/params.cpp
     src/motor.cpp
     src/button.cpp
+    src/magnetic_sensor.cpp
 )
 
 target_include_directories(smart_reamer_lib INTERFACE
