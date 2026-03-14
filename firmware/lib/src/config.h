@@ -19,7 +19,7 @@
 #define CFG_WIFI_STA_SSID          "FMI-AIR-NEW"
 #define CFG_WIFI_STA_PASS          ""
 
-#define CFG_WIFI_STA_MAX_TRIES     1
+#define CFG_WIFI_STA_MAX_TRIES     10
 
 // ------------- CONFIG -------------
 #define MAX_ERROR_MSG_BYTES        255
