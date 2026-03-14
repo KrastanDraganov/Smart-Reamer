@@ -48,13 +48,13 @@ void ErrorTracker::log_error(ErrorCode err, uint64_t err_code) {
 	char err_msg[MAX_ERROR_MSG_BYTES]{};
 	this->fill_error_msg(err_msg, err, err_code);
 
-	smart_reamer_ex_log_err("panic", err_msg);
+	smart_reamer_ex_log_err("panic", "%s", err_msg);
 }
 
 void ErrorTracker::print_error(ErrorCode err, uint64_t err_code) {
 	this->fill_error_msg(this->error_msg, err, err_code);
 
-	smart_reamer_ex_log_err("panic", this->error_msg);
+	smart_reamer_ex_log_err("panic", "%s", this->error_msg);
 }
 
 void ErrorTracker::fatal_error(ErrorCode _err, uint64_t _code) {
