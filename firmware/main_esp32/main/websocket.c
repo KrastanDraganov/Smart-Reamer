@@ -262,13 +262,13 @@ static esp_err_t ws_handler(httpd_req_t* req) {
 		if (ws_pkt.type == HTTPD_WS_TYPE_TEXT) {
 			char* payload = (char*)ws_pkt.payload;
 
-			smart_reamer_ex_log_info("WS", "%s\n", payload);
-
 			char id_str[10] = {0};
 			extract_value(id_str, payload, "\"id\"");
 			int id = atoi(id_str);
 
 			extract_value(action, payload, "\"action\"");
+
+			smart_reamer_ex_log_info("WS", "Received message: id=%d, action=%s\n", id, action);
 
 			char token[MAX_ACTION_VALUE_SIZE] = {0};
 			extract_value(token, payload, "\"token\"");
