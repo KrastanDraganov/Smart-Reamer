@@ -131,14 +131,9 @@ export async function addLock(payload: AddLockPayload): Promise<Lock> {
 
   if (lockWsClient.isConnected) {
     try {
-      const res = await lockWsClient.pair(payload.name);
+      const res = await lockWsClient.pair(payload.device.macAddress);
       token = res.token ?? '';
       deviceId = res.deviceId ?? deviceId;
-
-      // After successful pairing, apply the token to the websocket client
-      if (token && typeof (lockWsClient as any).setToken === 'function') {
-        (lockWsClient as any).setToken(token);
-      }
     } catch {
       // Pairing failed, still add lock without token
     }
