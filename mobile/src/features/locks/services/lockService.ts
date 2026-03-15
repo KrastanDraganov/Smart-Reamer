@@ -33,9 +33,12 @@ async function waitForConnection(
   throw new Error('Timeout while waiting for lock client to connect');
 }
 
-async function ensureConnected(ipAddress: string, token?: string): Promise<void> {
+async function ensureConnected(
+  ipAddress: string,
+  options?: { token?: string; port?: number },
+): Promise<void> {
   if (!lockWsClient.isConnected) {
-    lockWsClient.connect(ipAddress, token);
+    lockWsClient.connect(ipAddress, options);
     await waitForConnection(lockWsClient);
   }
 }
@@ -43,12 +46,13 @@ async function ensureConnected(ipAddress: string, token?: string): Promise<void>
 async function pairWithRetry(
   ipAddress: string,
   macAddress: string,
+  port?: number,
 ): Promise<PairResult> {
   let lastError: Error | undefined;
 
   for (let attempt = 1; attempt <= PAIR_MAX_ATTEMPTS; attempt++) {
     try {
-      await ensureConnected(ipAddress);
+      await ensureConnected(ipAddress, { port });
       const res = await lockWsClient.pair(macAddress);
       return {
         token: res.token ?? '',
@@ -140,13 +144,7 @@ export async function sendLockCommand(
   if (lock.token && lock.ipAddress) {
     lockWsClient.setToken(lock.token);
     if (!lockWsClient.isConnected) {
-      lockWsClient.connect(
-        lock.ipAddress,
-        lock.token,
-        // Use the stored port if available to avoid defaulting to an incorrect port
-        // (e.g., 443 instead of a discovered 8080 in simulator/dev).
-        (lock as any).port ? { port: (lock as any).port } : undefined
-      );
+      lockWsClient.connect(lock.ipAddress, { token: lock.token, port: lock.port });
       await waitForConnection(lockWsClient);
     }
     const res = await lockWsClient.send(action);
@@ -161,7 +159,7 @@ export async function sendLockCommand(
 
 export async function addLock(payload: AddLockPayload): Promise<Lock> {
   const { addLock: storeAdd } = useLockStore.getState();
-  const { ipAddress, macAddress, port } = payload.device as any;
+  const { ipAddress, macAddress, port } = payload.device;
 
   let token = '';
   let deviceId = macAddress;
