@@ -178,6 +178,10 @@ void smart_reamer_ex_motor_set_current_position(long position) {
 	motor_stepper.setCurrentPosition(position);
 }
 
+uint32_t smart_reamer_ex_get_time_ms(void) {
+	return (uint32_t)(esp_timer_get_time() / 1000);
+}
+
 void smart_reamer_ex_gpio_init_input(uint8_t pin) {
 	gpio_reset_pin((gpio_num_t)pin);
 	gpio_set_direction((gpio_num_t)pin, GPIO_MODE_INPUT);
