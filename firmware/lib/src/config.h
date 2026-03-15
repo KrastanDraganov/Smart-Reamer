@@ -22,8 +22,8 @@
 #define CFG_WIFI_STA_MAX_TRIES     10
 
 // ------------- LOCK CONFIG --------
-#define LOCK_MOTOR_POS_LOCKED      0
-#define LOCK_MOTOR_POS_UNLOCKED    800
+#define LOCK_MOTOR_POS_LOCKED      800
+#define LOCK_MOTOR_POS_UNLOCKED    0
 #define MAX_PAIRED_DEVICES         3
 #define FIRMWARE_VERSION           "1.0.0"
 #define NVS_NAMESPACE_LOCK         "lock"
