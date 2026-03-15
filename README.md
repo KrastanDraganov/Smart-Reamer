@@ -45,11 +45,11 @@ Smart-Reamer/
 
 ## Prerequisites
 
-| Component | Requirement |
-|-----------|-------------|
+| Component | Requirement                                                                                              |
+| --------- | -------------------------------------------------------------------------------------------------------- |
 | Firmware  | [ESP-IDF](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/) (v5.x), CMake, Ninja |
-| Mobile    | Node.js 18+, npm/yarn, Expo CLI, Xcode (iOS) or Android Studio (Android) |
-| Backend   | Node.js 18+ |
+| Mobile    | Node.js 18+, npm/yarn, Expo CLI, Xcode (iOS) or Android Studio (Android)                                 |
+| Backend   | Node.js 18+                                                                                              |
 
 ## Setup
 
@@ -156,3 +156,7 @@ The PCB design files are in `boards/schema/` (KiCad format). The hardware uses:
 **Mobile:** React Native 0.83, Expo SDK 55, TypeScript 5.9, expo-router, react-native-unistyles, TanStack Query, Zustand, react-native-zeroconf, react-native-mmkv
 
 **Backend:** Node.js, Upstash Redis
+
+## Presentation
+
+https://docs.google.com/presentation/d/1CJHD37SnOY2IarPdmYYmFTQDSxiSsTZ49IzXwv2TkE4/edit?usp=sharing
