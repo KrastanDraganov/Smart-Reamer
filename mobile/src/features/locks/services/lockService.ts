@@ -1,5 +1,5 @@
 import { useLockStore } from '../stores/lockStore';
-import type { AddLockPayload, Lock, LockEvent } from '../types';
+import type { AddLockPayload, Lock, LockEvent, PairResult } from '../types';
 import { lockWsClient } from './websocketClient';
 
 /* ---- Local event log (persisted in memory per session) ---- */
@@ -43,7 +43,7 @@ async function ensureConnected(ipAddress: string, token?: string): Promise<void>
 async function pairWithRetry(
   ipAddress: string,
   macAddress: string,
-): Promise<{ token: string; deviceId: string }> {
+): Promise<PairResult> {
   let lastError: Error | undefined;
 
   for (let attempt = 1; attempt <= PAIR_MAX_ATTEMPTS; attempt++) {
