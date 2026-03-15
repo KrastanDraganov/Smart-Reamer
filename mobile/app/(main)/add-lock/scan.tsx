@@ -13,6 +13,7 @@ import { startDiscovery } from '@/features/locks/services/discoveryService';
 import { useAddLockFlowStore } from '@/features/locks/stores/addLockFlowStore';
 const AP_SSID_PREFIX = 'Smart-Reamer';
 const AP_DEFAULT_IP = '192.168.4.1';
+const AP_SUBNET_PREFIX = '192.168.4.';
 
 export default function ScanScreen() {
   const { t } = useTranslation();
@@ -26,14 +27,24 @@ export default function ScanScreen() {
 
   const checkApMode = useCallback(async () => {
     const state = await NetInfo.fetch();
-    const details = state.details as { ssid?: string } | null;
+    const details = state.details as {
+      ssid?: string;
+      ipAddress?: string;
+    } | null;
+
     const ssid = details?.ssid ?? '';
-    if (ssid.startsWith(AP_SSID_PREFIX)) {
+    const ipAddress = details?.ipAddress ?? '';
+
+    const isSsidMatch = ssid.startsWith(AP_SSID_PREFIX);
+    const isApSubnet = ipAddress.startsWith(AP_SUBNET_PREFIX);
+
+    if (isSsidMatch || isApSubnet) {
+      const deviceName = isSsidMatch ? ssid : 'Smart-Reamer';
       setApDetected(true);
       addDevice({
-        name: ssid,
+        name: deviceName,
         ipAddress: AP_DEFAULT_IP,
-        macAddress: `ap-${ssid}`,
+        macAddress: `ap-${deviceName}`,
         port: 443,
         serviceType: '_smartlock._tcp.',
       });
@@ -49,7 +60,12 @@ export default function ScanScreen() {
 
     cancelRef.current = startDiscovery(
       (device) => addDevice(device),
-      () => setIsScanning(false)
+      () => setIsScanning(false),
+      (error) => {
+        if (__DEV__) {
+          console.warn('[Discovery]', error.message);
+        }
+      }
     );
   }, [addDevice, reset, checkApMode]);
 

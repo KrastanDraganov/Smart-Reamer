@@ -1,10 +1,10 @@
-import { env } from '@/config/env';
 import { DISCOVERY_TIMEOUT_MS, MOCK_DISCOVERED_DEVICES } from '../constants';
 import type { DiscoveredDevice } from '../types';
 import { startZeroconfDiscovery } from './zeroconfDiscoveryService';
 
 type OnDeviceFound = (device: DiscoveredDevice) => void;
 type OnComplete = () => void;
+type OnError = (error: Error) => void;
 
 /**
  * Mock implementation of mDNS device discovery.
@@ -37,19 +37,18 @@ function startMockDiscovery(
 
 /**
  * Unified discovery entry point.
- * Uses Zeroconf on real devices, falls back to mock on dev/simulator.
+ * Always attempts real Zeroconf first. Falls back to mock only when the
+ * native module is unavailable (e.g. running in a simulator/emulator).
  */
 export function startDiscovery(
   onDeviceFound: OnDeviceFound,
-  onComplete: OnComplete
+  onComplete: OnComplete,
+  onError?: OnError
 ): () => void {
-  if (!env.isDev) {
-    try {
-      return startZeroconfDiscovery(onDeviceFound, onComplete);
-    } catch {
-      // Native module not available, fall through to mock
-    }
+  try {
+    return startZeroconfDiscovery(onDeviceFound, onComplete, onError);
+  } catch {
+    // Native module not available (simulator/emulator), use mock
+    return startMockDiscovery(onDeviceFound, onComplete);
   }
-
-  return startMockDiscovery(onDeviceFound, onComplete);
 }
