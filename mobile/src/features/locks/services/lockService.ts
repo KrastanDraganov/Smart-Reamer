@@ -140,7 +140,13 @@ export async function sendLockCommand(
   if (lock.token && lock.ipAddress) {
     lockWsClient.setToken(lock.token);
     if (!lockWsClient.isConnected) {
-      lockWsClient.connect(lock.ipAddress, lock.token);
+      lockWsClient.connect(
+        lock.ipAddress,
+        lock.token,
+        // Use the stored port if available to avoid defaulting to an incorrect port
+        // (e.g., 443 instead of a discovered 8080 in simulator/dev).
+        (lock as any).port ? { port: (lock as any).port } : undefined
+      );
       await waitForConnection(lockWsClient);
     }
     const res = await lockWsClient.send(action);
@@ -155,13 +161,17 @@ export async function sendLockCommand(
 
 export async function addLock(payload: AddLockPayload): Promise<Lock> {
   const { addLock: storeAdd } = useLockStore.getState();
-  const { ipAddress, macAddress } = payload.device;
+  const { ipAddress, macAddress, port } = payload.device as any;
 
   let token = '';
   let deviceId = macAddress;
 
   try {
-    const pairResult = await pairWithRetry(ipAddress, macAddress);
+    const pairResult = await pairWithRetry(
+      ipAddress,
+      macAddress,
+      port
+    );
     token = pairResult.token;
     deviceId = pairResult.deviceId;
   } catch {
@@ -181,6 +191,8 @@ export async function addLock(payload: AddLockPayload): Promise<Lock> {
     name: payload.name,
     ipAddress,
     macAddress: deviceId,
+    // Persist the discovered port (if available) so future connections use the correct endpoint.
+    ...(port !== undefined ? { port } : {}),
     isLocked: statusRes?.isLocked ?? true,
     isOnline: lockWsClient.isConnected,
     batteryLevel: 100,
