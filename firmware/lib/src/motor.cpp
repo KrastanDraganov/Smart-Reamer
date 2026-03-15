@@ -54,8 +54,7 @@ void Motor::update() {
 
 	case MotorState::WaitToClose:
 		if ((smart_reamer_ex_get_time_ms() - this->wait_start_time) >= WAIT_DURATION_MS) {
-			this->current_state = MotorState::GoToOpen;
-			this->target_position = POSITION_OPEN;
+			this->current_state = MotorState::Idle;
 			this->save_position();
 		}
 		break;
