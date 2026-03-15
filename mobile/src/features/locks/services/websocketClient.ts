@@ -149,8 +149,8 @@ class LockWebSocketClient {
     });
   }
 
-  async pair(deviceName: string): Promise<WsResponse> {
-    return this.send('pair', { deviceName });
+  async pair(deviceId: string): Promise<WsResponse> {
+    return this.send('pair', { deviceId });
   }
 
   setToken(token: string): void {
@@ -181,6 +181,7 @@ class LockWebSocketClient {
     this.ws.onmessage = (event: WebSocketMessageEvent) => {
       try {
         const data = JSON.parse(event.data as string) as WsResponse;
+
         if (data.id !== undefined && data.id !== null && this.pending.has(data.id)) {
           const req = this.pending.get(data.id);
           if (req) {

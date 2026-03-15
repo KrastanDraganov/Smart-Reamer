@@ -76,7 +76,8 @@
         }
       ],
       "expo-image",
-      "./plugins/withSwift5Pods"
+      "./plugins/withSwift5Pods",
+      "./plugins/withSelfSignedCert"
     ],
     "experiments": {
       "typedRoutes": true,
