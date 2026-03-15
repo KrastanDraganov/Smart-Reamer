@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import Zeroconf from 'react-native-zeroconf';
 import { DISCOVERY_TIMEOUT_MS, SERVICE_TYPE } from '../constants';
 import type { DiscoveredDevice } from '../types';
@@ -15,6 +16,13 @@ interface ZeroconfService {
 }
 
 const zeroconf = new Zeroconf();
+
+/**
+ * Android's NsdManager is unreliable for mDNS discovery, so we use the
+ * embedded Apple mDNSResponder (DNSSD) backend that react-native-zeroconf
+ * ships. iOS uses its native Bonjour stack and ignores this parameter.
+ */
+const IMPL_TYPE = Platform.OS === 'android' ? 'DNSSD' : undefined;
 
 /**
  * Real mDNS/Bonjour discovery using react-native-zeroconf.
@@ -59,16 +67,16 @@ export function startZeroconfDiscovery(
     .replace(/\.$/, '')
     .split('._');
 
-  zeroconf.scan(type, protocol, 'local.');
+  zeroconf.scan(type, protocol, 'local.', IMPL_TYPE);
 
   const timeoutId = setTimeout(() => {
-    zeroconf.stop();
+    zeroconf.stop(IMPL_TYPE);
     onComplete();
   }, DISCOVERY_TIMEOUT_MS);
 
   return () => {
     clearTimeout(timeoutId);
-    zeroconf.stop();
+    zeroconf.stop(IMPL_TYPE);
     zeroconf.removeListener('resolved', resolvedHandler);
     zeroconf.removeListener('error', errorHandler);
   };

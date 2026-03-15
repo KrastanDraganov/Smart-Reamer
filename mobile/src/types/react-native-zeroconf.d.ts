@@ -1,6 +1,8 @@
 declare module 'react-native-zeroconf' {
   import { EventEmitter } from 'events';
 
+  type ImplType = 'NSD' | 'DNSSD';
+
   interface ZeroconfService {
     name: string;
     fullName: string;
@@ -12,8 +14,8 @@ declare module 'react-native-zeroconf' {
 
   class Zeroconf extends EventEmitter {
     constructor();
-    scan(type?: string, protocol?: string, domain?: string): void;
-    stop(): void;
+    scan(type?: string, protocol?: string, domain?: string, implType?: ImplType): void;
+    stop(implType?: ImplType): void;
     getServices(): Record<string, ZeroconfService>;
     removeDeviceListeners(): void;
     addDeviceListeners(): void;
