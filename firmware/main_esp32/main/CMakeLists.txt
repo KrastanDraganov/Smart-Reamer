@@ -5,6 +5,7 @@ idf_component_register(
         "websocket.c"
         "wifi.c"
         "web_server.c"
+        "mdns_service.c"
         "../vendor/stepper_motor.cpp"
     INCLUDE_DIRS
         "."

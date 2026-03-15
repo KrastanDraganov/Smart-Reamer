@@ -10,6 +10,7 @@
 #include <freertos/task.h>
 
 #include "wifi.h"
+#include "websocket.h"
 #include "ext_api.h"
 #include "app.h"
 
@@ -34,6 +35,8 @@ void smart_reamer_main_loop(void* arg) {
 
 void app_main(void) {
 	ESP_ERROR_CHECK(nvs_flash_init());
+
+	ws_init_lock_state();
 
 	if (!wifi_init_sta()) {
 		wifi_init_softap();

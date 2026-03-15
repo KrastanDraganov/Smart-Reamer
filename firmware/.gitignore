@@ -3,4 +3,6 @@
 *.swo
 *~
 main_esp32/main/certs/prvtkey.pem
-main_esp32/managed_components
+main_esp32/managed_components/
+main_esp32/build/
+main_esp32/.cache/

@@ -8,6 +8,7 @@ export interface Lock {
   batteryLevel: number;
   lastSeen: string;
   addedAt: string;
+  token?: string;
 }
 
 export interface LockEvent {
@@ -31,4 +32,31 @@ export type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'err
 export interface AddLockPayload {
   name: string;
   device: DiscoveredDevice;
+}
+
+export interface WsRequest {
+  id: number;
+  action: string;
+  token?: string;
+  [key: string]: unknown;
+}
+
+export interface WsResponse {
+  id?: number;
+  status?: string;
+  message?: string;
+  event?: string;
+  isLocked?: boolean;
+  isOnline?: boolean;
+  token?: string;
+  deviceId?: string;
+  firmwareVersion?: string;
+  name?: string;
+  timestamp?: number;
+  code?: string;
+}
+
+export interface PairResult {
+  token: string;
+  deviceId: string;
 }

@@ -117,9 +117,12 @@
       "done": "Scan Complete",
       "hint": "Make sure your lock is powered on and connected to the same WiFi network.",
       "noDevices": "No devices found. Make sure your lock is on and try again.",
+      "noDevicesAp": "No devices found. Connect to the lock's WiFi (Smart-Reamer) and try again.",
       "foundDevices": "Found {{count}} device",
       "foundDevices_plural": "Found {{count}} devices",
-      "retry": "Scan Again"
+      "retry": "Scan Again",
+      "connectAp": "Connect to Lock WiFi",
+      "apDetected": "Lock detected via direct WiFi connection."
     },
     "select": {
       "title": "Select Device",
@@ -130,7 +133,21 @@
       "title": "Name Your Lock",
       "label": "Lock Name",
       "placeholder": "e.g., Front Door",
-      "confirm": "Add Lock"
+      "confirm": "Add Lock",
+      "pairing": "Pairing with device...",
+      "pairingFailed": "Pairing failed. The lock was added but may require re-pairing."
+    },
+    "wifi": {
+      "title": "WiFi Setup",
+      "subtitle": "Connect your lock to your home WiFi network for remote access.",
+      "ssidLabel": "WiFi Network Name",
+      "ssidPlaceholder": "Enter WiFi SSID",
+      "passwordLabel": "WiFi Password",
+      "passwordPlaceholder": "Enter WiFi password",
+      "configure": "Configure WiFi",
+      "skip": "Skip for Now",
+      "success": "WiFi configured! The lock will restart and join your network.",
+      "failed": "Failed to configure WiFi. You can try again later from lock settings."
     }
   },
   "actions": {
