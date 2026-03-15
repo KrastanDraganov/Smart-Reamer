@@ -31,16 +31,26 @@ void Motor::update() {
 		this->current_position = new_position;
 	}
 
+	static MotorState last_state = MotorState::Idle;
+	static bool motion_issued = false;
+
+	if (this->current_state != last_state) {
+		motion_issued = false;
+		last_state = this->current_state;
+	}
+
 	switch (this->current_state) {
 	case MotorState::Idle:
 		break;
 
 	case MotorState::GoToClose:
+		if (!motion_issued) {
+			smart_reamer_ex_motor_go_to_steps(this->target_position);
+			motion_issued = true;
+		}
 		if (this->current_position >= POSITION_CLOSED) {
 			this->current_state = MotorState::WaitToClose;
 			this->wait_start_time = smart_reamer_ex_get_time_ms();
-		} else {
-			smart_reamer_ex_motor_go_to_steps(POSITION_CLOSED);
 		}
 		break;
 
@@ -53,11 +63,13 @@ void Motor::update() {
 		break;
 
 	case MotorState::GoToOpen:
+		if (!motion_issued) {
+			smart_reamer_ex_motor_go_to_steps(this->target_position);
+			motion_issued = true;
+		}
 		if (this->current_position <= POSITION_OPEN) {
 			this->current_state = MotorState::WaitToOpen;
 			this->wait_start_time = smart_reamer_ex_get_time_ms();
-		} else {
-			smart_reamer_ex_motor_go_to_steps(POSITION_OPEN);
 		}
 		break;
 
@@ -95,7 +107,6 @@ void Motor::move_to(int32_t target) {
 	} else {
 		this->current_state = MotorState::GoToClose;
 	}
-	smart_reamer_ex_motor_go_to_steps(target);
 }
 
 void Motor::save_position() {
