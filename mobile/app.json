@@ -13,7 +13,7 @@
       "bundleIdentifier": "com.myapp.app",
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true,
-        "CFBundleLocalizations": ["en", "ar"],
+        "CFBundleLocalizations": ["en"],
         "ITSAppUsesNonExemptEncryption": false,
         "NSLocalNetworkUsageDescription": "Smart Reamer needs local network access to discover and communicate with smart locks on your WiFi network.",
         "NSBonjourServices": ["_smartlock._tcp."]
@@ -49,8 +49,8 @@
         "expo-localization",
         {
           "supportedLocales": {
-            "ios": ["en", "ar"],
-            "android": ["en", "ar"]
+            "ios": ["en"],
+            "android": ["en"]
           }
         }
       ],
