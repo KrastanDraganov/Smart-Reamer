@@ -38,7 +38,7 @@ This is the single source of truth for all coding conventions in this project. E
 | Screen file (app/)  | lowercase with hyphens         | `forgot-password.tsx`           |
 | Layout file (app/)  | underscore prefix              | `_layout.tsx`                   |
 | Constants file      | camelCase                      | `constants.ts`                  |
-| i18n locale files   | lowercase                      | `en.json`, `ar.json`            |
+| i18n locale files   | lowercase                      | `en.json`                       |
 
 ### Components
 
@@ -560,8 +560,7 @@ const { t } = useTranslation();
 
 Both files must be updated together:
 
-- `src/i18n/locales/en.json` - English (primary)
-- `src/i18n/locales/ar.json` - Arabic (RTL)
+- `src/i18n/locales/en.json` - English
 
 Keys use dot notation and semantic naming:
 
@@ -594,10 +593,6 @@ Keys use dot notation and semantic naming:
   }
 }
 ```
-
-### RTL Support
-
-RTL is handled at the app level in `app/_layout.tsx`. Do not manually flip layouts. Use `flexDirection` values normally - the RTL mirroring is applied globally.
 
 ---
 
@@ -743,7 +738,7 @@ fix/<short-description>
 chore/<short-description>
 ```
 
-Examples: `feat/product-listing`, `fix/rtl-badge-layout`, `chore/upgrade-expo-55`
+Examples: `feat/product-listing`, `fix/badge-layout`, `chore/upgrade-expo-55`
 
 ### Pre-commit Checks
 

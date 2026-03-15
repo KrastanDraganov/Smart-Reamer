@@ -3,22 +3,16 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useCallback, useEffect } from 'react';
-import { I18nManager, Platform, View } from 'react-native';
+import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 import { StyleSheet, useUnistyles } from 'react-native-unistyles';
 import { ErrorBoundary } from '@/common/components/ErrorBoundary';
-import i18n from '@/i18n/config';
+import '@/i18n/config';
 import { QueryProvider } from '@/providers';
 import { useAuthStore } from '@/providers/auth/authStore';
 
 SplashScreen.preventAutoHideAsync();
-
-const isArabic = i18n.language === 'ar';
-if (Platform.OS !== 'web') {
-  I18nManager.allowRTL(isArabic);
-  I18nManager.forceRTL(isArabic);
-}
 
 function useAuthInit() {
   const initialize = useAuthStore((s) => s.initialize);

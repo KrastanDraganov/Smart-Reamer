@@ -15,7 +15,7 @@ A production-grade React Native Expo base template designed as a reusable founda
 - **State Management**: @tanstack/react-query (server) + Zustand (client)
 - **Backend**: Supabase (graceful degradation if unconfigured)
 - **API Client**: Axios with auth/error interceptors
-- **i18n**: react-i18next (EN/AR, RTL support)
+- **i18n**: react-i18next (English)
 - **Storage**: react-native-mmkv
 - **Forms**: react-hook-form + Zod
 - **Linting**: ESLint 9 flat config
@@ -44,7 +44,7 @@ src/
 ├── config/                # Centralized env config with validation
 ├── features/              # Feature modules (auth, settings)
 ├── hooks/                 # useBottomPadding, useNetworkStatus, useScreenDimensions, useProtectedRoute
-├── i18n/                  # Translation files (en.json, ar.json) and config
+├── i18n/                  # Translation files (en.json) and config
 ├── integrations/          # Supabase client (graceful init)
 ├── providers/             # QueryProvider, auth store
 ├── services/api/          # Axios client with interceptors

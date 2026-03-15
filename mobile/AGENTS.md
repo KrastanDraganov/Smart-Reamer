@@ -16,7 +16,7 @@ A production-grade React Native Expo base template designed as a reusable founda
 - Zustand (client state management)
 - Supabase (authentication + database, graceful degradation if unconfigured)
 - Axios HTTP client with interceptors
-- react-i18next (English + Arabic, RTL layout support)
+- react-i18next (English)
 - react-native-mmkv (persistent key-value storage)
 - react-hook-form + zod/v4 (forms and validation)
 - Jest + jest-expo (testing)
@@ -124,8 +124,7 @@ rncopilot/
 │   ├── i18n/
 │   │   ├── config.ts           # i18next initialization
 │   │   └── locales/
-│   │       ├── en.json         # English translations
-│   │       └── ar.json         # Arabic translations
+│   │       └── en.json         # English translations
 │   ├── integrations/
 │   │   └── supabase.ts         # Supabase client (null if env not set)
 │   ├── providers/
@@ -249,8 +248,8 @@ const { t } = useTranslation();
 <Text>{t('home.welcome')}</Text>         // CORRECT
 <Text>Welcome</Text>                     // WRONG
 
-// Always update BOTH locale files when adding text:
-// src/i18n/locales/en.json  AND  src/i18n/locales/ar.json
+// Update locale file when adding text:
+// src/i18n/locales/en.json
 ```
 
 Zod validation messages use i18n keys:
@@ -378,9 +377,9 @@ The Supabase client in `src/integrations/supabase.ts` returns `null` if env vars
 
 The app supports light and dark modes via react-native-unistyles. Theme tokens are defined in `src/theme/light-theme.ts` and `src/theme/dark-theme.ts`. Always use `theme.colors.*` tokens — never hardcode colors.
 
-### i18n and RTL
+### i18n
 
-The app supports English and Arabic. Arabic triggers RTL layout via `I18nManager.forceRTL(true)` in `app/_layout.tsx`. Do not manually flip layouts — the global RTL flag handles it. However, always test UI changes in both LTR and RTL orientations.
+The app uses English translations via react-i18next. All user-facing strings must go through the `useTranslation` hook.
 
 ---
 
@@ -406,7 +405,7 @@ Examples:
 
 1. Run `npm run validate` — must pass with zero errors
 2. Run `npm test` — all tests must pass
-3. Ensure both `en.json` and `ar.json` are updated if UI text was added
+3. Ensure `en.json` is updated if UI text was added
 4. Ensure no `any` types were introduced
 5. Ensure no inline styles, color literals, or hardcoded strings
 6. Ensure all new interactive elements have `accessibilityRole` and `accessibilityLabel`
