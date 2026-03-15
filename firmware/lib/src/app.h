@@ -23,6 +23,10 @@ bool smart_reamer_is_locked(void);
 bool smart_reamer_is_pair_mode(void);
 bool smart_reamer_get_unlock_request(void);
 
+void smart_reamer_motor_lock(void);
+void smart_reamer_motor_unlock(void);
+bool smart_reamer_motor_is_locked(void);
+
 #ifdef __cplusplus
 }
 #endif

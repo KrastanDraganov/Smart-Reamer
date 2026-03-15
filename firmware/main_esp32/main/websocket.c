@@ -52,8 +52,11 @@ void ws_init_lock_state(void) {
 		nvs_close(h);
 	}
 
-	long target = s_is_locked ? LOCK_MOTOR_POS_LOCKED : LOCK_MOTOR_POS_UNLOCKED;
-	smart_reamer_ex_motor_go_to_steps(target);
+	if (s_is_locked) {
+		smart_reamer_motor_lock();
+	} else {
+		smart_reamer_motor_unlock();
+	}
 
 	/* Load saved tokens */
 	nvs_handle_t ah;
@@ -206,14 +209,14 @@ void ws_broadcast_lock_status(bool is_locked) {
 /* ---- Lock / Unlock via motor ---- */
 static void do_lock(void) {
 	s_is_locked = true;
-	smart_reamer_ex_motor_go_to_steps(LOCK_MOTOR_POS_LOCKED);
+	smart_reamer_motor_lock();
 	persist_lock_state(true);
 	ESP_LOGI(TAG, "Lock command executed");
 }
 
 static void do_unlock(void) {
 	s_is_locked = false;
-	smart_reamer_ex_motor_go_to_steps(LOCK_MOTOR_POS_UNLOCKED);
+	smart_reamer_motor_unlock();
 	persist_lock_state(false);
 	ESP_LOGI(TAG, "Unlock command executed");
 }
@@ -260,6 +263,8 @@ static esp_err_t ws_handler(httpd_req_t* req) {
 		if (ws_pkt.type == HTTPD_WS_TYPE_TEXT) {
 			char* payload = (char*)ws_pkt.payload;
 
+			smart_reamer_ex_log_info("WS", "%s\n", payload);
+
 			char id_str[10] = {0};
 			extract_value(id_str, payload, "\"id\"");
 			int id = atoi(id_str);
@@ -269,9 +274,10 @@ static esp_err_t ws_handler(httpd_req_t* req) {
 			char token[MAX_ACTION_VALUE_SIZE] = {0};
 			extract_value(token, payload, "\"token\"");
 
-			/* --- pair: no auth required --- */
-			if (strcmp(action, "pair") == 0) {
-				if (s_token_count >= MAX_PAIRED_DEVICES) {
+		/* --- pair: no auth required --- */
+		if (strcmp(action, "pair") == 0) {
+			ESP_LOGI(TAG, "pair action: s_token_count=%d, MAX_PAIRED_DEVICES=%d", s_token_count, MAX_PAIRED_DEVICES);
+			if (s_token_count >= MAX_PAIRED_DEVICES) {
 					snprintf(response, sizeof(response),
 						"{\"id\":%d,\"status\":\"error\",\"message\":\"max paired devices reached\"}", id);
 					respond_str(req, response);

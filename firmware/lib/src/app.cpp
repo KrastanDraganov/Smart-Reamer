@@ -96,6 +96,10 @@ void smart_reamer_main_loop_begin() {
 	measure.begin();
 	error_tracker.begin();
 
+	uint32_t saved_position = 0;
+	smart_reamer_ex_nvs_read_u32(Motor::NVS_KEY_POSITION, &saved_position);
+	reamer_locked = (saved_position >= Motor::POSITION_CLOSED / 2);
+
 	motor.begin();
 
 	button_unlock.begin();
@@ -115,4 +119,18 @@ void smart_reamer_main_loop_body() {
 	button_pair.update();
 
 	magnetic_sensor.update();
+}
+
+void smart_reamer_motor_lock(void) {
+	reamer_locked = true;
+	motor.close();
+}
+
+void smart_reamer_motor_unlock(void) {
+	reamer_locked = false;
+	motor.open();
+}
+
+bool smart_reamer_motor_is_locked(void) {
+	return reamer_locked;
 }

@@ -2,6 +2,8 @@
 #include "measure.h"
 #include "ext_api.h"
 
+static constexpr uint32_t WAIT_DURATION_MS = 500;
+
 Motor::Motor() {}
 
 void Motor::begin() {
@@ -12,10 +14,13 @@ void Motor::begin() {
 	smart_reamer_ex_motor_set_current_position(this->current_position);
 
 	if (this->current_position >= POSITION_CLOSED) {
-		this->move_to(POSITION_OPEN);
+		this->target_position = POSITION_OPEN;
+		this->current_state = MotorState::GoToOpen;
 	} else {
-		this->move_to(POSITION_CLOSED);
+		this->target_position = POSITION_CLOSED;
+		this->current_state = MotorState::GoToClose;
 	}
+	this->save_state();
 }
 
 void Motor::update() {
@@ -26,18 +31,42 @@ void Motor::update() {
 		this->current_position = new_position;
 	}
 
-	if (this->current_state == MotorState::Moving) {
-		if (this->current_position == this->target_position) {
-			if (this->target_position == POSITION_OPEN) {
-				this->current_state = MotorState::Opened;
-				this->move_to(POSITION_CLOSED);
-			} else if (this->target_position == POSITION_CLOSED) {
-				this->current_state = MotorState::Closed;
-				this->move_to(POSITION_OPEN);
-			}
-			this->save_position();
-			this->save_state();
+	switch (this->current_state) {
+	case MotorState::Idle:
+		break;
+
+	case MotorState::GoToClose:
+		if (this->current_position >= POSITION_CLOSED) {
+			this->current_state = MotorState::WaitToClose;
+			this->wait_start_time = smart_reamer_ex_get_time_ms();
+		} else {
+			smart_reamer_ex_motor_go_to_steps(POSITION_CLOSED);
 		}
+		break;
+
+	case MotorState::WaitToClose:
+		if ((smart_reamer_ex_get_time_ms() - this->wait_start_time) >= WAIT_DURATION_MS) {
+			this->current_state = MotorState::GoToOpen;
+			this->target_position = POSITION_OPEN;
+			this->save_position();
+		}
+		break;
+
+	case MotorState::GoToOpen:
+		if (this->current_position <= POSITION_OPEN) {
+			this->current_state = MotorState::WaitToOpen;
+			this->wait_start_time = smart_reamer_ex_get_time_ms();
+		} else {
+			smart_reamer_ex_motor_go_to_steps(POSITION_OPEN);
+		}
+		break;
+
+	case MotorState::WaitToOpen:
+		if ((smart_reamer_ex_get_time_ms() - this->wait_start_time) >= WAIT_DURATION_MS) {
+			this->current_state = MotorState::Idle;
+			this->save_position();
+		}
+		break;
 	}
 }
 
@@ -48,16 +77,24 @@ void Motor::do_measure(Measure* m) {
 }
 
 void Motor::open() {
-	this->move_to(POSITION_OPEN);
+	this->target_position = POSITION_OPEN;
+	this->current_state = MotorState::GoToOpen;
+	this->save_state();
 }
 
 void Motor::close() {
-	this->move_to(POSITION_CLOSED);
+	this->target_position = POSITION_CLOSED;
+	this->current_state = MotorState::GoToClose;
+	this->save_state();
 }
 
 void Motor::move_to(int32_t target) {
 	this->target_position = target;
-	this->current_state = MotorState::Moving;
+	if (target <= POSITION_OPEN) {
+		this->current_state = MotorState::GoToOpen;
+	} else {
+		this->current_state = MotorState::GoToClose;
+	}
 	smart_reamer_ex_motor_go_to_steps(target);
 }
 
@@ -79,4 +116,9 @@ void Motor::load_state() {
 	uint32_t value = 0;
 	smart_reamer_ex_nvs_read_u32(NVS_KEY_STATE, &value);
 	this->current_state = (MotorState)value;
+}
+
+void Motor::set_idle() {
+	this->current_state = MotorState::Idle;
+	this->save_state();
 }
