@@ -15,6 +15,9 @@ function addEvent(lockId: string, action: 'lock' | 'unlock') {
   });
 }
 
+const PAIR_MAX_ATTEMPTS = 3;
+const PAIR_RETRY_BASE_MS = 1000;
+
 async function waitForConnection(
   client: { isConnected: boolean },
   timeoutMs: number = 5000,
@@ -28,6 +31,38 @@ async function waitForConnection(
     await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
   }
   throw new Error('Timeout while waiting for lock client to connect');
+}
+
+async function ensureConnected(ipAddress: string, token?: string): Promise<void> {
+  if (!lockWsClient.isConnected) {
+    lockWsClient.connect(ipAddress, token);
+    await waitForConnection(lockWsClient);
+  }
+}
+
+async function pairWithRetry(
+  ipAddress: string,
+  macAddress: string,
+): Promise<{ token: string; deviceId: string }> {
+  let lastError: Error | undefined;
+
+  for (let attempt = 1; attempt <= PAIR_MAX_ATTEMPTS; attempt++) {
+    try {
+      await ensureConnected(ipAddress);
+      const res = await lockWsClient.pair(macAddress);
+      return {
+        token: res.token ?? '',
+        deviceId: res.deviceId ?? macAddress,
+      };
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+      if (attempt < PAIR_MAX_ATTEMPTS) {
+        await new Promise((r) => setTimeout(r, PAIR_RETRY_BASE_MS * attempt));
+      }
+    }
+  }
+
+  throw lastError ?? new Error('Pairing failed');
 }
 
 /* ---- Public API ---- */
@@ -78,19 +113,17 @@ export async function fetchLock(id: string): Promise<Lock> {
       lockWsClient.setToken(lock.token);
       if (!lockWsClient.isConnected) {
         lockWsClient.connect(lock.ipAddress, lock.token);
-        await new Promise((r) => setTimeout(r, 1500));
+        await waitForConnection(lockWsClient);
       }
-      if (lockWsClient.isConnected) {
-        const res = await lockWsClient.send('get_status');
-        return {
-          ...lock,
-          isLocked: res.isLocked ?? lock.isLocked,
-          isOnline: true,
-          lastSeen: new Date().toISOString(),
-        };
-      }
+      const res = await lockWsClient.send('get_status');
+      return {
+        ...lock,
+        isLocked: res.isLocked ?? lock.isLocked,
+        isOnline: true,
+        lastSeen: new Date().toISOString(),
+      };
     } catch {
-      // Fall through to return local data
+      // Connection or request failed; return local data
     }
   }
   return lock;
@@ -108,7 +141,7 @@ export async function sendLockCommand(
     lockWsClient.setToken(lock.token);
     if (!lockWsClient.isConnected) {
       lockWsClient.connect(lock.ipAddress, lock.token);
-      await new Promise((r) => setTimeout(r, 1500));
+      await waitForConnection(lockWsClient);
     }
     const res = await lockWsClient.send(action);
     const isLocked = res.isLocked ?? (action === 'lock');
@@ -122,21 +155,17 @@ export async function sendLockCommand(
 
 export async function addLock(payload: AddLockPayload): Promise<Lock> {
   const { addLock: storeAdd } = useLockStore.getState();
-
-  lockWsClient.connect(payload.device.ipAddress);
-  await new Promise((r) => setTimeout(r, 1500));
+  const { ipAddress, macAddress } = payload.device;
 
   let token = '';
-  let deviceId = payload.device.macAddress;
+  let deviceId = macAddress;
 
-  if (lockWsClient.isConnected) {
-    try {
-      const res = await lockWsClient.pair(payload.device.macAddress);
-      token = res.token ?? '';
-      deviceId = res.deviceId ?? deviceId;
-    } catch {
-      // Pairing failed, still add lock without token
-    }
+  try {
+    const pairResult = await pairWithRetry(ipAddress, macAddress);
+    token = pairResult.token;
+    deviceId = pairResult.deviceId;
+  } catch {
+    // All pairing attempts failed; add the lock without a token
   }
 
   if (token) {
@@ -150,7 +179,7 @@ export async function addLock(payload: AddLockPayload): Promise<Lock> {
   const newLock: Lock = {
     id: `lock-${Date.now()}`,
     name: payload.name,
-    ipAddress: payload.device.ipAddress,
+    ipAddress,
     macAddress: deviceId,
     isLocked: statusRes?.isLocked ?? true,
     isOnline: lockWsClient.isConnected,
