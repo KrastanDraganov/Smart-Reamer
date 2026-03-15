@@ -52,11 +52,10 @@ void ws_init_lock_state(void) {
 		nvs_close(h);
 	}
 
-	if (s_is_locked) {
-		smart_reamer_motor_lock();
-	} else {
-		smart_reamer_motor_unlock();
-	}
+	/* Note: actual motor lock/unlock will be handled after the motor
+	 * subsystem has completed initialization, to avoid being overwritten
+	 * by Motor::begin() during startup.
+	 */
 
 	/* Load saved tokens */
 	nvs_handle_t ah;
