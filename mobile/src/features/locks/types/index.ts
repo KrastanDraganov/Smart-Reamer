@@ -9,6 +9,7 @@ export interface Lock {
   lastSeen: string;
   addedAt: string;
   token?: string;
+  port?: number;
 }
 
 export interface LockEvent {
