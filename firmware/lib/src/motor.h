@@ -39,7 +39,5 @@ class Motor : public Measureable {
 
 		void save_position();
 		void load_position();
-		void save_state();
-		void load_state();
 		void move_to(int32_t target);
 };

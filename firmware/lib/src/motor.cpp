@@ -9,7 +9,6 @@ Motor::Motor() {}
 void Motor::begin() {
 	smart_reamer_ex_motor_init();
 	this->load_position();
-	this->load_state();
 
 	smart_reamer_ex_motor_set_current_position(this->current_position);
 
@@ -20,7 +19,6 @@ void Motor::begin() {
 		this->target_position = POSITION_CLOSED;
 		this->current_state = MotorState::GoToClose;
 	}
-	this->save_state();
 }
 
 void Motor::update() {
@@ -91,13 +89,11 @@ void Motor::do_measure(Measure* m) {
 void Motor::open() {
 	this->target_position = POSITION_OPEN;
 	this->current_state = MotorState::GoToOpen;
-	this->save_state();
 }
 
 void Motor::close() {
 	this->target_position = POSITION_CLOSED;
 	this->current_state = MotorState::GoToClose;
-	this->save_state();
 }
 
 void Motor::move_to(int32_t target) {
@@ -119,17 +115,6 @@ void Motor::load_position() {
 	this->current_position = (int32_t)value;
 }
 
-void Motor::save_state() {
-	smart_reamer_ex_nvs_write_u32(NVS_KEY_STATE, (uint32_t)this->current_state);
-}
-
-void Motor::load_state() {
-	uint32_t value = 0;
-	smart_reamer_ex_nvs_read_u32(NVS_KEY_STATE, &value);
-	this->current_state = (MotorState)value;
-}
-
 void Motor::set_idle() {
 	this->current_state = MotorState::Idle;
-	this->save_state();
 }
