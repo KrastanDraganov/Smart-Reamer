@@ -14,13 +14,13 @@
 #include "ext_api.h"
 #include "app.h"
 
-#define PARKING_PLATFORM_MAIN_LOOP_STACK_SIZE (8 * 1024)
-#define PARKING_PLATFORM_MAIN_LOOP_PRIORITY   10
+#define SMART_REAMER_MAIN_LOOP_STACK_SIZE (8 * 1024)
+#define SMART_REAMER_MAIN_LOOP_PRIORITY   10
 // pin the main loop to the second core, which does nothing else
-#define PARKING_PLATFORM_MAIN_LOOP_CORE_ID    1
+#define SMART_REAMER_MAIN_LOOP_CORE_ID    1
 
 void smart_reamer_main_loop(void* arg) {
-	ESP_LOGI("main_loop", "parking platform main loop starting on core %d", xPortGetCoreID());
+	ESP_LOGI("main_loop", "smart reamer main loop starting on core %d", xPortGetCoreID());
 
 	esp_task_wdt_add(NULL);
 
@@ -45,11 +45,11 @@ void app_main(void) {
 	xTaskCreatePinnedToCore(
 		smart_reamer_main_loop,
 		"smart_reamer_main_loop",
-		PARKING_PLATFORM_MAIN_LOOP_STACK_SIZE,
+		SMART_REAMER_MAIN_LOOP_STACK_SIZE,
 		NULL,
-		PARKING_PLATFORM_MAIN_LOOP_PRIORITY,
+		SMART_REAMER_MAIN_LOOP_PRIORITY,
 		NULL,
-		PARKING_PLATFORM_MAIN_LOOP_CORE_ID
+		SMART_REAMER_MAIN_LOOP_CORE_ID
 	);
 
 	while (true) {
